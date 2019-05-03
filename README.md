@@ -1,7 +1,7 @@
 # VIVICT - Vivict Video Comparison Tool
 
 Easy to use in-browser tool for subjective comparison of the visual quality of different encodings of the same source 
-video.
+video. Try it out on https://svt.github.io/vivict/ .
 
 ![](docs/screenshot.png?raw=true "vivict screenshot")
 
