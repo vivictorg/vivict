@@ -104,7 +104,7 @@ class SplitView extends Component {
             <div className={cx('split-view-container', {'dragging': this.state.dragging})} ref={(ref) => this.setSplitViewContainerRef(ref)}
             tabIndex="-1"
             onClick={(e) => this.onClick(e) }>
-                <div className="split-view-clipper" ref={(ref) => this.setSplitViewClipperRef(ref)}>
+                <div className={cx("split-view-clipper", {"show-border": this.props.splitBorderVisible})} ref={(ref) => this.setSplitViewClipperRef(ref)}>
                     {this.props.leftSideContent}
                 </div>
                 {this.props.children}

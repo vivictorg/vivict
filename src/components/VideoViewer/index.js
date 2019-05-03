@@ -61,6 +61,7 @@ class VideoViewer extends Component {
             leftSource: {name: "NONE", url: null},
             rightSource:{name: "NONE", url: null},
             tracking: true,
+            splitBorderVisible: true,
             rightVideoOffset: 0,
             showHelp: true,
             playReverse: false,
@@ -250,11 +251,16 @@ class VideoViewer extends Component {
         [COMMANDS.REST_PAN_ZOOM, () => this.resetPanZoom()],
         [COMMANDS.PLAY, () => this.playForward()],
         [COMMANDS.PAUSE, () => this.pause()],
-        [COMMANDS.TOGGLE_HELP, () => this.toggleShowHelp()]
+        [COMMANDS.TOGGLE_HELP, () => this.toggleShowHelp()],
+        [COMMANDS.TOGGLE_SPLIT_BORDER_VISIBLE, () => this.toggleSplitBorderVisible()]
     ].reduce((result, [command, action]) => Object.assign(result, {[command.name]: action}), {});
 
     toggleShowHelp() {
         this.setState({showHelp: !this.state.showHelp});
+    }
+
+    toggleSplitBorderVisible() {
+        this.setState({splitBorderVisible: !this.state.splitBorderVisible});
     }
 
     onFullScreenChange() {
@@ -283,6 +289,7 @@ class VideoViewer extends Component {
                 <TimeDisplay position={this.state.position}/>
                 <HotKeys className="hotkeys-div" keyMap={KEY_MAP} handlers={this.shortCutHandlers}>
                     <SplitView tracking={this.state.tracking}
+                               splitBorderVisible={this.state.splitBorderVisible}
                                onDrag={(dx,dy) => this.pan(dx,dy)}
                                onClick={() => this.playPause()}
                                ref={this.setSplitViewRef}

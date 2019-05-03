@@ -42,6 +42,7 @@ respectively. You can either input a URL or open a local file. If the source is 
 <kbd>right</kbd> Pan right
 <kbd>left</kbd> Pan left
 <kbd>0</kbd> Reset pan and zoom to default
+<kbd>s</kbd> Toggle visibility of split border
 <kbd>esc</kbd> Toggle help window
 
 If you think the shortcuts could be better, feel free to suggest a setup!
