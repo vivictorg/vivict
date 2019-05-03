@@ -19,29 +19,29 @@ respectively. You can either input a URL or open a local file. If the source is 
 
 #### Shortcuts for video control
 
-<kbd>l</kbd> Play video
-<kbd>k</kbd> Pause video
-<kbd>space</kbd> Play/Pause video
-<kbd>,</kbd> Step forward 1 frame
-<kbd>,</kbd> Step backward 1 frame
-<kbd>/</kbd> or <kbd>-</kbd>  Step forward 1 second
-<kbd>m</kbd> Step backward 1 second
+<kbd>l</kbd> Play video  
+<kbd>k</kbd> Pause video  
+<kbd>space</kbd> Play/Pause video  
+<kbd>,</kbd> Step forward 1 frame  
+<kbd>,</kbd> Step backward 1 frame  
+<kbd>/</kbd> or <kbd>-</kbd>  Step forward 1 second  
+<kbd>m</kbd> Step backward 1 second  
 
 #### Shortcuts for view control
 
-<kbd>f</kbd> Toggle full screen
-<kbd>t</kbd> Toggle split position follows mouse
-<kbd>]</kbd> View only left video
-<kbd>\[</kbd> View only right video
-<kbd><</kbd> Decrease timeshift between videos
-<kbd>></kbd> Increase timeshift between videos
-<kbd>u</kbd>  Zoom in
-<kbd>i</kbd> Zoom out
-<kbd>up</kbd> Pan up
-<kbd>down</kbd> Pan down
-<kbd>right</kbd> Pan right
-<kbd>left</kbd> Pan left
-<kbd>0</kbd> Reset pan and zoom to default
+<kbd>f</kbd> Toggle full screen  
+<kbd>t</kbd> Toggle split position follows mouse  
+<kbd>]</kbd> View only left video  
+<kbd>\[</kbd> View only right video  
+<kbd><</kbd> Decrease timeshift between videos  
+<kbd>></kbd> Increase timeshift between videos  
+<kbd>u</kbd>  Zoom in  
+<kbd>i</kbd> Zoom out  
+<kbd>up</kbd> Pan up  
+<kbd>down</kbd> Pan down  
+<kbd>right</kbd> Pan right  
+<kbd>left</kbd> Pan left  
+<kbd>0</kbd> Reset pan and zoom to default  
 
 If you think the shortcuts could be better, feel free to suggest a setup!
 
@@ -72,7 +72,7 @@ Feel free to issue pull requests or file issues. For more details, see [CONTRIBU
 
 ## License
 
-Copyright 2019 Sveriges Televison AB.
+Copyright 2019 Sveriges Television AB.
 
 Vivict is released under the [MIT License](LICENSE).
 
