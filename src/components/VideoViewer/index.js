@@ -40,7 +40,7 @@ class VideoViewer extends Component {
     constructor(props) {
         super(props);
         this.setVideoViewerRef = videoViewer => {
-            this.videoViewer = videoViewer
+            this.videoViewer = videoViewer;
         };
         this.setRightVideoRef = rightVideo => {
             console.log('setRightVideoRef', rightVideo);
@@ -61,7 +61,8 @@ class VideoViewer extends Component {
             tracking: true,
             rightVideoOffset: 0,
             showHelp: true,
-            playReverse: false
+            playReverse: false,
+            userDefinedPanZoom: false
         }
     }
 
@@ -195,21 +196,25 @@ class VideoViewer extends Component {
     zoomIn() {
         this.leftVideo.zoomIn();
         this.rightVideo.zoomIn();
+        this.setState({userDefinedPanZoom: true});
     }
 
     zoomOut() {
         this.leftVideo.zoomOut();
         this.rightVideo.zoomOut();
+        this.setState({userDefinedPanZoom: true});
     }
 
     resetPanZoom() {
         this.leftVideo.resetPanZoom();
         this.rightVideo.resetPanZoom();
+        this.setState({userDefinedPanZoom: false});
     }
 
     pan(deltaX, deltaY) {
         this.leftVideo.pan(deltaX, deltaY);
         this.rightVideo.pan(deltaX, deltaY);
+        this.setState({userDefinedPanZoom: true});
     }
 
 
@@ -240,10 +245,17 @@ class VideoViewer extends Component {
         this.setState({showHelp: !this.state.showHelp});
     }
 
+    onFullScreenChange() {
+        if (!this.state.userDefinedPanZoom) {
+            this.resetPanZoom();
+        }
+    }
+
     componentDidMount() {
         this.splitView.focus();
         this.seek(startPosition)
             .catch(e => console.trace(e));
+        this.videoViewer.addEventListener('fullscreenchange', () => this.onFullScreenChange());
     }
 
     render() {
