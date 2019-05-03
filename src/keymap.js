@@ -7,14 +7,15 @@ const command = (name, keys, description) => ({
 });
 
 export const COMMANDS = {
+
+        PLAY: command('PLAY', 'l', 'Play video'),
+        PAUSE: command('PAUSE', 'k', 'Pause video'),
+        PLAY_PAUSE: command('PLAY_PAUSE', 'space', 'Play/Pause video'),
         STEP_FORWARD_FRAME: command('STEP_FORWARD_FRAME', '.', 'Step forward 1 frame'),
         STEP_BACKWARD_FRAME: command('STEP_BACKWARD_FRAME', ',', 'Step backward 1 frame'),
         STEP_FORWARD: command('STEP_FORWARD', ['/', '-'], 'Step forward 1 second'),
         STEP_BACKWARD: command('STEP_BACKWARD', 'm', 'Step backward 1 second'),
-        PLAY_PAUSE: command('PLAY_PAUSE', 'space', 'Play/Pause video'),
-        PLAY: command('PLAY', 'l', 'Play video'),
-        PAUSE: command('PAUSE', 'k', 'Pause video'),
-        FULLSCREEN: command('FULLSCREEN', 'f', 'Toggle fullscreen'),
+        FULLSCREEN: command('FULLSCREEN', 'f', 'Toggle full screen'),
         TOGGLE_TRACKING: command('TOGGLE_TRACKING', 't', 'Toggle split position follows mouse'),
         LEFT_ONLY: command('LEFT_ONLY', ']', 'View only left video'),
         RIGHT_ONLY: command('RIGHT_ONLY', '[', 'View only right video'),
