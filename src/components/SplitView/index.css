@@ -37,9 +37,13 @@
     top: 0;
     bottom: 0;
     overflow: hidden;
-    border-right: solid black 1px;
     z-index: 11;
 }
+
+.split-view-clipper.show-border {
+    border-right: solid black 1px;
+}
+
 .split-view-clipper video {
     position: absolute;
     top: 0;

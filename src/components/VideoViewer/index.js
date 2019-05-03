@@ -61,11 +61,14 @@ class VideoViewer extends Component {
             leftSource: {name: "NONE", url: null},
             rightSource:{name: "NONE", url: null},
             tracking: true,
+            splitBorderVisible: true,
             rightVideoOffset: 0,
             showHelp: true,
             playReverse: false,
             userDefinedPanZoom: false
-        }
+        };
+
+        this.onFullScreenChange = this.onFullScreenChange.bind(this);
     }
 
     setPosition(position) {
@@ -89,7 +92,13 @@ class VideoViewer extends Component {
     }
 
     changeOffset(delta) {
-        this.setState({rightVideoOffset: this.state.rightVideoOffset + delta});
+
+        if(delta === 0) {
+            this.setState({rightVideoOffset: delta});
+        } else {
+            this.setState({rightVideoOffset: this.state.rightVideoOffset + delta});
+        }
+
         if (!this.state.playing) {
             this.seek(this.leftVideo.currentTime());
         } else {
@@ -232,6 +241,7 @@ class VideoViewer extends Component {
         [COMMANDS.RIGHT_ONLY, () => this.splitView.setSplitPosition(0)],
         [COMMANDS.TIMESHIFT_INCREASE, () => this.changeOffset(1)],
         [COMMANDS.TIMESHIFT_DECREASE, () => this.changeOffset(-1)],
+        [COMMANDS.TIMESHIFT_RESET, () => this.changeOffset(0)],
         [COMMANDS.ZOOM_IN, () => this.zoomIn()],
         [COMMANDS.ZOOM_OUT, () => this.zoomOut()],
         [COMMANDS.PAN_UP, () => this.pan(0, 10)],
@@ -240,11 +250,17 @@ class VideoViewer extends Component {
         [COMMANDS.PAN_LEFT, () => this.pan(10, 0)],
         [COMMANDS.REST_PAN_ZOOM, () => this.resetPanZoom()],
         [COMMANDS.PLAY, () => this.playForward()],
-        [COMMANDS.PAUSE, () => this.pause()]
+        [COMMANDS.PAUSE, () => this.pause()],
+        [COMMANDS.TOGGLE_HELP, () => this.toggleShowHelp()],
+        [COMMANDS.TOGGLE_SPLIT_BORDER_VISIBLE, () => this.toggleSplitBorderVisible()]
     ].reduce((result, [command, action]) => Object.assign(result, {[command.name]: action}), {});
 
     toggleShowHelp() {
         this.setState({showHelp: !this.state.showHelp});
+    }
+
+    toggleSplitBorderVisible() {
+        this.setState({splitBorderVisible: !this.state.splitBorderVisible});
     }
 
     onFullScreenChange() {
@@ -257,7 +273,11 @@ class VideoViewer extends Component {
         this.splitView.focus();
         this.seek(startPosition)
             .catch(e => console.trace(e));
-        this.videoViewer.addEventListener('fullscreenchange', () => this.onFullScreenChange());
+        this.videoViewer.addEventListener('fullscreenchange', this.onFullScreenChange);
+    }
+
+    componentWillUnmount(){
+        this.videoViewer.removeEventListener('fullscreenchange', this.onFullScreenChange);
     }
 
     render() {
@@ -269,6 +289,7 @@ class VideoViewer extends Component {
                 <TimeDisplay position={this.state.position}/>
                 <HotKeys className="hotkeys-div" keyMap={KEY_MAP} handlers={this.shortCutHandlers}>
                     <SplitView tracking={this.state.tracking}
+                               splitBorderVisible={this.state.splitBorderVisible}
                                onDrag={(dx,dy) => this.pan(dx,dy)}
                                onClick={() => this.playPause()}
                                ref={this.setSplitViewRef}
@@ -280,7 +301,7 @@ class VideoViewer extends Component {
                                      onDurationSet={(duration) => this.onDurationSet(duration)}
                         />
                         <div className={cx("big-play-button", {
-                            "hidden": this.state.playing
+                            "hidden": this.state.playing || this.state.position !== 0
                         })}
                              onClick={() => this.play()}
                         >
