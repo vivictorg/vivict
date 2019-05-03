@@ -10,6 +10,8 @@ import OffsetIndicator from './OffsetIndicator';
 import {Help, HelpButton} from '../Help';
 import {COMMANDS, KEY_MAP} from '../../keymap'
 import {openFullscreen, isFullscreen, closeFullscreen} from "../../util/FullscreenUtils";
+import {FiPlay} from 'react-icons/fi';
+import cx from 'classnames';
 
 const DEFAULT_SOURCE_URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
@@ -40,7 +42,7 @@ class VideoViewer extends Component {
     constructor(props) {
         super(props);
         this.setVideoViewerRef = videoViewer => {
-            this.videoViewer = videoViewer
+            this.videoViewer = videoViewer;
         };
         this.setRightVideoRef = rightVideo => {
             console.log('setRightVideoRef', rightVideo);
@@ -61,7 +63,8 @@ class VideoViewer extends Component {
             tracking: true,
             rightVideoOffset: 0,
             showHelp: true,
-            playReverse: false
+            playReverse: false,
+            userDefinedPanZoom: false
         };
 
         this.escFunction = this.escFunction.bind(this);
@@ -209,21 +212,25 @@ class VideoViewer extends Component {
     zoomIn() {
         this.leftVideo.zoomIn();
         this.rightVideo.zoomIn();
+        this.setState({userDefinedPanZoom: true});
     }
 
     zoomOut() {
         this.leftVideo.zoomOut();
         this.rightVideo.zoomOut();
+        this.setState({userDefinedPanZoom: true});
     }
 
     resetPanZoom() {
         this.leftVideo.resetPanZoom();
         this.rightVideo.resetPanZoom();
+        this.setState({userDefinedPanZoom: false});
     }
 
     pan(deltaX, deltaY) {
         this.leftVideo.pan(deltaX, deltaY);
         this.rightVideo.pan(deltaX, deltaY);
+        this.setState({userDefinedPanZoom: true});
     }
 
 
@@ -255,10 +262,17 @@ class VideoViewer extends Component {
         this.setState({showHelp: !this.state.showHelp});
     }
 
+    onFullScreenChange() {
+        if (!this.state.userDefinedPanZoom) {
+            this.resetPanZoom();
+        }
+    }
+
     componentDidMount() {
         this.splitView.focus();
         this.seek(startPosition)
             .catch(e => console.trace(e));
+        this.videoViewer.addEventListener('fullscreenchange', () => this.onFullScreenChange());
         document.addEventListener("keydown", this.escFunction, false);
     }
 
@@ -285,6 +299,13 @@ class VideoViewer extends Component {
                                      onTimeUpdate={(time) => this.onTimeUpdate(time)}
                                      onDurationSet={(duration) => this.onDurationSet(duration)}
                         />
+                        <div className={cx("big-play-button", {
+                            "hidden": this.state.playing
+                        })}
+                             onClick={() => this.play()}
+                        >
+                            <FiPlay size="32px"/>
+                        </div>
                     </SplitView>
                     
                     <VideoControls playing={this.state.playing}
