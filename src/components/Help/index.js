@@ -8,14 +8,16 @@ import {COMMANDS} from '../../keymap';
 const Help = ({visible, onClick}) => (
     <div className={cx('help', {'hidden': !visible})}>
         <div className='help-header'>
-            <h3>Vivict - Vivict Video Comparison Tool</h3>
+            <h3 className={"padding10"}>Vivict - Vivict Video Comparison Tool</h3>
             <div className='close-button' onClick={() => onClick()}>
                 <FiX />
             </div>
         </div>
         <div>
-            <h4>Keybindings:</h4>
+            <h4 className={"padding10"}>Keybindings:</h4>
             {generateKeymapHelp()}
+            {copyrightText()}
+            {githubLink()}
         </div>
     </div>);
 
@@ -31,9 +33,19 @@ const generateKeymapHelp = () => {
     return Object.keys(COMMANDS).map(key => {
         const command = COMMANDS[key];
         return (
-            <div key={"keybinding-" + command.name}><bold>{JSON.stringify(command.keys)}</bold>{"  " + command.description}</div>
+            <div key={"keybinding-" + command.name}><span className={"bold"}>{command.keys}</span>{"  " + command.description}</div>
         )
     });
+};
+
+const copyrightText = () => {
+    return (
+        <h4 className={"padding10"}>Copyright 2019 Sveriges Television AB.</h4>
+    )
+};
+
+const githubLink = () => {
+    return <a href="https://github.com/SVT/vivict" >Contribute on Github, released under MIT</a>
 };
 
 export {Help, HelpButton}

@@ -16,6 +16,15 @@
     border-radius: 10px;
 }
 
+.help .bold {
+    font-weight: bold;
+}
+
+.help .padding10 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
 .help:hover {
     opacity: 1.0;
 }
