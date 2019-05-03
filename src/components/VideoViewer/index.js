@@ -62,7 +62,9 @@ class VideoViewer extends Component {
             rightVideoOffset: 0,
             showHelp: true,
             playReverse: false
-        }
+        };
+
+        this.escFunction = this.escFunction.bind(this);
     }
 
     setPosition(position) {
@@ -83,6 +85,12 @@ class VideoViewer extends Component {
 
     toggleTracking() {
         this.setState({tracking: !this.state.tracking})
+    }
+
+    escFunction(event){
+        if(event.keyCode === 27) {
+            this.toggleShowHelp();
+        }
     }
 
     changeOffset(delta) {
@@ -251,6 +259,11 @@ class VideoViewer extends Component {
         this.splitView.focus();
         this.seek(startPosition)
             .catch(e => console.trace(e));
+        document.addEventListener("keydown", this.escFunction, false);
+    }
+
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.escFunction, false);
     }
 
     render() {

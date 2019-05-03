@@ -28,7 +28,8 @@ export const COMMANDS = {
         PAN_DOWN: command('PAN_DOWN', 'down', 'Pan down'),
         PAN_RIGHT: command('PAN_RIGHT', 'right', 'Pan right'),
         PAN_LEFT: command('PAN_LEFT', 'left', 'Pan left'),
-        REST_PAN_ZOOM: command('RESET_PAN_ZOOM', '0', 'Reset pan and zoom to default')
+        REST_PAN_ZOOM: command('RESET_PAN_ZOOM', '0', 'Reset pan and zoom to default'),
+        TOGGLE_HELP: command('TOOGLE_HELP', 'esc', 'Toggle help window')
 };
 
 
