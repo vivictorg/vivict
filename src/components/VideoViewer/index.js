@@ -10,6 +10,8 @@ import OffsetIndicator from './OffsetIndicator';
 import {Help, HelpButton} from '../Help';
 import {COMMANDS, KEY_MAP} from '../../keymap'
 import {openFullscreen, isFullscreen, closeFullscreen} from "../../util/FullscreenUtils";
+import {FiPlay} from 'react-icons/fi';
+import cx from 'classnames';
 
 const DEFAULT_SOURCE_URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
@@ -277,6 +279,13 @@ class VideoViewer extends Component {
                                      onTimeUpdate={(time) => this.onTimeUpdate(time)}
                                      onDurationSet={(duration) => this.onDurationSet(duration)}
                         />
+                        <div className={cx("big-play-button", {
+                            "hidden": this.state.playing
+                        })}
+                             onClick={() => this.play()}
+                        >
+                            <FiPlay size="32px"/>
+                        </div>
                     </SplitView>
                     
                     <VideoControls playing={this.state.playing}

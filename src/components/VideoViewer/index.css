@@ -60,6 +60,31 @@ video::-webkit-media-controls-enclosure {
     cursor: pointer;
 }
 
+.big-play-button {
+    position: absolute;
+    display: flex;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    margin-left: -32px;
+    margin-top: -32px;
+    border-radius: 32px;
+    width: 64px;
+    height: 64px;
+    line-height: 32px;
+    opacity: 0.8;
+    padding: 0;
+    background: black;
+    border: solid 2px white;
+    z-index: 15;
+}
+
+.big-play-button .hidden {
+    display: none;
+}
+
 .controls {
     display: flex;
     padding-left: 20px;
