@@ -67,7 +67,7 @@ class VideoViewer extends Component {
             userDefinedPanZoom: false
         };
 
-        this.escFunction = this.escFunction.bind(this);
+        this.onFullScreenChange = this.onFullScreenChange.bind(this);
     }
 
     setPosition(position) {
@@ -88,12 +88,6 @@ class VideoViewer extends Component {
 
     toggleTracking() {
         this.setState({tracking: !this.state.tracking})
-    }
-
-    escFunction(event){
-        if(event.keyCode === 27) {
-            this.toggleShowHelp();
-        }
     }
 
     changeOffset(delta) {
@@ -255,7 +249,8 @@ class VideoViewer extends Component {
         [COMMANDS.PAN_LEFT, () => this.pan(10, 0)],
         [COMMANDS.REST_PAN_ZOOM, () => this.resetPanZoom()],
         [COMMANDS.PLAY, () => this.playForward()],
-        [COMMANDS.PAUSE, () => this.pause()]
+        [COMMANDS.PAUSE, () => this.pause()],
+        [COMMANDS.TOGGLE_HELP, () => this.toggleShowHelp()]
     ].reduce((result, [command, action]) => Object.assign(result, {[command.name]: action}), {});
 
     toggleShowHelp() {
@@ -272,12 +267,11 @@ class VideoViewer extends Component {
         this.splitView.focus();
         this.seek(startPosition)
             .catch(e => console.trace(e));
-        this.videoViewer.addEventListener('fullscreenchange', () => this.onFullScreenChange());
-        document.addEventListener("keydown", this.escFunction, false);
+        this.videoViewer.addEventListener('fullscreenchange', this.onFullScreenChange);
     }
 
     componentWillUnmount(){
-        document.removeEventListener("keydown", this.escFunction, false);
+        this.videoViewer.removeEventListener('fullscreenchange', this.onFullScreenChange);
     }
 
     render() {
@@ -300,7 +294,7 @@ class VideoViewer extends Component {
                                      onDurationSet={(duration) => this.onDurationSet(duration)}
                         />
                         <div className={cx("big-play-button", {
-                            "hidden": this.state.playing
+                            "hidden": this.state.playing || this.state.position !== 0
                         })}
                              onClick={() => this.play()}
                         >
