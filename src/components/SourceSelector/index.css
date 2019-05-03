@@ -1,0 +1,85 @@
+.source-selector {
+    opacity: 0.4;
+    z-index: 14;
+    height: 24px;
+    position: absolute;
+    background: white;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    justify-content: space-between;
+    border-radius: 6px;
+}
+
+
+.spacer {
+    width: 10px;
+    display: inline-block;
+}
+
+.source-buttons {
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.url-button {
+    width: 20px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.url-input {
+    height: 24px;
+    flex-grow: 1;
+}
+
+.hidden {
+    display: none;
+}
+
+.source-file-input {
+    font-size: medium;
+    height: 20px;
+    display: inline-block;
+    cursor: pointer;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.source-file-input > input[type="file"] {
+    display: none;
+}
+
+.source-selector:hover {
+    opacity: 1.0;
+    z-index: 14;
+}
+
+.source-selector select {
+    border-radius: 5px;
+    margin-right: 2px;
+    background: white;
+    outline: none;
+    /*border-color: #0000aa;*/
+}
+
+.source-selector:hover select {
+    background: white;
+}
+
+.source-metadata {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    justify-content: space-between;
+    width: 30%;
+}
+
+.source-name {
+    height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+}

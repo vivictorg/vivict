@@ -1,0 +1,61 @@
+.split-view-container {
+    display: block;
+    line-height: 0;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    z-index: inherit;
+    outline: none;
+}
+
+.split-view-container:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+}
+
+.split-view-container > video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: auto;
+}
+
+.split-view-container:-webkit-full-screen > video {
+    width: 100%;
+    height: 100%;
+}
+
+.split-view-container:-webkit-full-screen video {
+    width: 100vw;
+    height: 100vh;
+}
+
+.split-view-clipper {
+    width: 50%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    border-right: solid black 1px;
+    z-index: 11;
+}
+.split-view-clipper video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: auto;
+}
+
+.split-view-container:-webkit-full-screen .split-view-clipper {
+    height: 100%;
+}
+
+.split-view-container:-webkit-full-screen .split-view-clipper video {
+    height: 100%;
+}
+
+.dragging {
+    cursor: grab;
+}

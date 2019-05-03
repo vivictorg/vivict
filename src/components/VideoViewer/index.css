@@ -1,0 +1,186 @@
+.video-viewer {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background: black;
+}
+
+.video-viewer:-webkit-full-screen .video-compare-container {
+    height: 100%;
+    width: 100%;
+}
+
+.video-viewer:-webkit-full-screen video {
+    height: auto;
+    width: 100vw;
+}
+
+.hotkeys-div {
+    height: 100%;
+    width: 100%;
+}
+
+.offset-indicator {
+    opacity: 0.4;
+    z-index: 14;
+    height: 20px;
+    top: 25px;
+    right: 2px;
+    position: absolute;
+    background: white;
+}
+
+.left-source-selector {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 50px);
+}
+
+.right-source-selector {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: calc(50% - 50px);
+}
+
+video::-webkit-media-controls-enclosure {
+    z-index: 14;
+}
+
+.close-viewer {
+    background: lightgrey;
+    position: absolute;
+    display: inline-block;
+    font-size: 16px;
+    top: -10px;
+    right: -10px;
+    z-index: inherit;
+    cursor: pointer;
+}
+
+.controls {
+    display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: rgba(0, 0, 0, 0);
+    color: #eee;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1em;
+    border-radius: 1em;
+    text-align: center;
+    opacity: 0;
+    transition: opacity .5s ease-in-out;
+    transition-delay: 0;
+    z-index: 14;
+    width: 95%;
+    height: 40px;
+}
+
+.controls > button {
+    margin-left: 2px;
+    margin-right: 2px;
+    border-radius: 16px;
+    width: 32px;
+    height: 32px;
+    line-height: 16px;
+    opacity: 0.8;
+    padding: 0;
+    background: black;
+    border: solid 2px white;
+    flex-shrink: 0;
+}
+
+.controls svg {
+    height: 18px;
+    width: 18px;
+    color: white;
+    fill: white;
+}
+
+input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    background: transparent;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-bottom: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    border: 2px solid white;
+    box-shadow: 0px 10px 10px rgba(0,0,0,0.25);
+    height: 22px;
+    width: 22px;
+    border-radius: 11px;
+    background: black;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -9px;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: 2px solid white;
+    box-shadow: 0px 10px 10px rgba(0,0,0,0.25);
+    height: 22px;
+    width: 22px;
+    border-radius: 11px;
+    background: black;
+    cursor: pointer;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    border: 2px solid white;
+    border-radius: 4px;
+    background: black;
+}
+
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    border: 2px solid white;
+    border-radius: 4px;
+    background: black;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: black;
+}
+
+
+.controls > button:before {
+    position: relative;
+    left: -3px;
+}
+
+.controls:hover {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.filler {
+    flex: 1 1 auto;
+}
+
+.time-display {
+    color: white;
+    position: absolute;
+    left: calc(50% - 45px);
+    top: 4px;
+    width: 90px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    z-index: 14;
+}
