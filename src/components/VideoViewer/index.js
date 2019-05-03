@@ -86,7 +86,13 @@ class VideoViewer extends Component {
     }
 
     changeOffset(delta) {
-        this.setState({rightVideoOffset: this.state.rightVideoOffset + delta});
+
+        if(delta === 0) {
+            this.setState({rightVideoOffset: delta});
+        } else {
+            this.setState({rightVideoOffset: this.state.rightVideoOffset + delta});
+        }
+
         if (!this.state.playing) {
             this.seek(this.leftVideo.currentTime());
         } else {
@@ -225,6 +231,7 @@ class VideoViewer extends Component {
         [COMMANDS.RIGHT_ONLY, () => this.splitView.setSplitPosition(0)],
         [COMMANDS.TIMESHIFT_INCREASE, () => this.changeOffset(1)],
         [COMMANDS.TIMESHIFT_DECREASE, () => this.changeOffset(-1)],
+        [COMMANDS.TIMESHIFT_RESET, () => this.changeOffset(0)],
         [COMMANDS.ZOOM_IN, () => this.zoomIn()],
         [COMMANDS.ZOOM_OUT, () => this.zoomOut()],
         [COMMANDS.PAN_UP, () => this.pan(0, 10)],
