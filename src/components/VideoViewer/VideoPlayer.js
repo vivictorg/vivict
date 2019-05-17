@@ -13,21 +13,23 @@ class VideoPlayer extends Component {
             panHorizontal: 0,
             panVertical: 0
         };
+        this.onTimeUpdate = this.onTimeUpdate.bind(this);
+        this.onMetadataLoaded = this.onMetadataLoaded.bind(this);
         this.setVideoRef =  (videoRef) => {
             this.videoElement = videoRef;
-            if(videoRef !== null) {
-                if (this.props.onTimeUpdate) {
-                    this.videoElement.addEventListener('timeupdate', () => {
-                        this.props.onTimeUpdate(this.videoElement.currentTime);
-                    });
-                }
-                if (this.props.onDurationSet) {
-                    this.videoElement.addEventListener('loadedmetadata', () => {
-                        this.props.onDurationSet(this.videoElement.duration);
-                    });
-                }
-            }
         };
+    }
+
+    onTimeUpdate() {
+        if (this.props.onTimeUpdate) {
+            this.props.onTimeUpdate(this.videoElement.currentTime);
+        }
+    }
+
+    onMetadataLoaded() {
+        if (this.props.onDurationSet) {
+            this.props.onDurationSet(this.videoElement.duration);
+        }
     }
 
     async play() {
@@ -121,6 +123,16 @@ class VideoPlayer extends Component {
 
     currentTime() {
         return this.videoElement.currentTime;
+    }
+
+    componentDidMount() {
+        this.videoElement.addEventListener('timeupdate', this.onTimeUpdate);
+        this.videoElement.addEventListener('loadedmetadata', this.onMetadataLoaded)
+    }
+
+    componentWillUnmount() {
+        this.videoElement.removeEventListener('timeupdate', this.onTimeUpdate);
+        this.videoElement.removeEventListener('loadedmetadata', this.onMetadataLoaded)
     }
 
     render() {
