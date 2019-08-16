@@ -17,6 +17,22 @@ The screen is split into two parts, with the left and right part displaying the 
 On the top left and right are the source selectors, allowing you to select sources for the left and right video 
 respectively. You can either input a URL or open a local file. If the source is a HLS-playlist, you can also select which video stream you want to view.
 
+#### URL parameters
+
+If you want to programmatically change the sources or the playback position, you can use the following URL parameters:
+
+- `leftVideoUrl` – sets the left video source
+- `rightVideoUrl` – sets the right video source
+- `leftVideoVariant` – sets the left video HLS variant
+- `rightVideoVariant` – sets the right video HLS variant
+- `startPosition` – sets the start position in seconds
+
+To use the parameters, you have to URL-encode the source URL. For example, to load the videos `http://example.com/test1.mp4` and `http://example.com/test2.mp4`, open the following URL:
+
+```
+http://localhost:3000/?leftVideoUrl=http%3A%2F%2Fexample.com%2Ftest1.mp4&rightVideoUrl=http%3A%2F%2Fexample.com%2Ftest2.mp4
+```
+
 #### Shortcuts for video control
 
 <kbd>l</kbd> Play video  
