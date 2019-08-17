@@ -21,7 +21,8 @@ const rightVideoUrl = urlParams.get('rightVideoUrl') || leftVideoUrl;
 const leftVideoVariant = urlParams.get('leftVideoVariant') || 0;
 const rightVideoVariant = urlParams.get('rightVideoVariant') || 1;
 const startPosition = Number(urlParams.get('position')) || 0;
-
+const hideSourceSelector = Boolean(urlParams.get('hideSourceSelector'));
+const hideHelp = Boolean(urlParams.get('hideHelp'));
 
 const DEFAULT_SOURCE_LEFT = {
     type: 'url',
@@ -63,10 +64,12 @@ class VideoViewer extends Component {
             tracking: true,
             splitBorderVisible: true,
             rightVideoOffset: 0,
-            showHelp: true,
+            showHelp: !hideHelp,
+            showSourceSelector: !hideSourceSelector,
             playReverse: false,
             userDefinedPanZoom: false
         };
+        console.dir(this.state);
 
         this.onFullScreenChange = this.onFullScreenChange.bind(this);
     }
@@ -309,7 +312,8 @@ class VideoViewer extends Component {
                         </div>
                     </SplitView>
                     
-                    <VideoControls playing={this.state.playing}
+                    <VideoControls visible={this.state.showSourceSelector}
+                                   playing={this.state.playing}
                                    onPlay={() => this.playPause()}
                                    onStep={(n) => this.step(n)}
                                    onFullscreen={() => this.fullscreen()}
@@ -318,10 +322,12 @@ class VideoViewer extends Component {
                                    position={this.state.position}
                     />
 
-                    <SourceSelector className="left-source-selector"
+                    <SourceSelector visible={this.state.showSourceSelector}
+                                    className="left-source-selector"
                                     defaultSource={DEFAULT_SOURCE_LEFT}
                                     onChange={(value) => this.onLeftSourceChange(value)} />
-                    <SourceSelector className="right-source-selector"
+                    <SourceSelector visible={this.state.showSourceSelector}
+                                    className="right-source-selector"
                                     defaultSource={DEFAULT_SOURCE_RIGHT}
                                     onChange={(value) => this.onRightSourceChange(value)} />
                     <OffsetIndicator offset={this.state.rightVideoOffset}/>

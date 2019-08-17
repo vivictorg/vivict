@@ -13,7 +13,8 @@ class SourceSelector extends Component {
         this.urlInputKeyDown = this.urlInputKeyDown.bind(this);
         this.state = {
             source: this.props.defaultSource,
-            showUrlInput: false
+            showUrlInput: false,
+            visible: this.props.visible
         };
     }
 
@@ -182,7 +183,7 @@ class SourceSelector extends Component {
 
     render() {
         return (
-            <div className={"source-selector " + this.props.className}>
+            <div className={cx("source-selector", this.props.className, {'hidden': !this.props.visible})}>
                 <div className="source-buttons">
                     <div title="open URL" className="url-button" >
                         <FiGlobe style={{cursor: 'pointer'}} onClick={() => this.showUrlInput()}/>
