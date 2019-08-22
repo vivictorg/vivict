@@ -26,6 +26,8 @@ If you want to programmatically change the sources or the playback position, you
 - `leftVideoVariant` – sets the left video HLS variant
 - `rightVideoVariant` – sets the right video HLS variant
 - `startPosition` – sets the start position in seconds
+- `hideHelp` – if 1, hides the automatic help menu
+- `hideSourceSelector` – if 1, hides the source selection menu
 
 To use the parameters, you have to URL-encode the source URL. For example, to load the videos `http://example.com/test1.mp4` and `http://example.com/test2.mp4`, open the following URL:
 
