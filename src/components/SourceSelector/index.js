@@ -114,8 +114,8 @@ class SourceSelector extends Component {
 
     setVariant(selectedVariant) {
         this.setState({hls: Object.assign({}, this.state.hls, {selectedVariant})});
-        const url = this.state.hls.variants[selectedVariant].url;
-        this.props.onChange(Object.assign({}, this.state.source, {url}));
+        const streamUrl = this.state.hls.variants[selectedVariant].url;
+        this.props.onChange(Object.assign({}, this.state.source, {streamUrl, variant: selectedVariant}));
     }
 
     changeSource(source) {
@@ -132,7 +132,7 @@ class SourceSelector extends Component {
         } else {
             this.setState({source, hls: null});
             this.loadMp4Metadata(source.url);
-            this.props.onChange(source);
+            this.props.onChange(Object.assign({}, this.state.source, {streamUrl: source.url}));
             if (prevSource.type === 'file' && prevSource.url) {
                 window.URL.revokeObjectURL(prevSource);
             }
