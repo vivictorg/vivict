@@ -10,6 +10,7 @@ import OffsetIndicator from './OffsetIndicator';
 import {Help, HelpButton} from '../Help';
 import {COMMANDS, KEY_MAP} from '../../keymap'
 import {openFullscreen, isFullscreen, closeFullscreen} from "../../util/FullscreenUtils";
+import {copyToClipboard} from "../../util/CopyClipboard";
 import {FiPlay} from 'react-icons/fi';
 import cx from 'classnames';
 
@@ -19,7 +20,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const leftVideoUrl = urlParams.get('leftVideoUrl') || DEFAULT_SOURCE_URL;
 const rightVideoUrl = urlParams.get('rightVideoUrl') || leftVideoUrl;
 const leftVideoVariant = urlParams.get('leftVideoVariant') || 0;
-const rightVideoVariant = urlParams.get('rightVideoVariant') || 1;
+const rightVideoVariant = urlParams.get('rightVideoVariant') || 0;
 const startPosition = Number(urlParams.get('position')) || 0;
 const hideSourceSelector = Boolean(urlParams.get('hideSourceSelector'));
 const hideHelp = Boolean(urlParams.get('hideHelp'));
@@ -163,6 +164,12 @@ class VideoViewer extends Component {
 
     }
 
+    async createShareUrl() {
+        let path = `${window.location.host}/?position=${this.state.position}&leftVideoVariant=${this.state.leftSource.variant}&leftVideoUrl=${this.state.leftSource.url}&rightVideoVariant=${this.state.rightSource.variant}&rightVideoUrl=${this.state.rightSource.url}`;
+        console.log("Copying to clipboard: " + path)
+        copyToClipboard(path)
+    }
+
     async pause() {
         if (!this.state.playing) {
             return Promise.resolve();
@@ -197,7 +204,7 @@ class VideoViewer extends Component {
         await this.pause();
         const time = videoElement.currentTime();
         console.log(`${JSON.stringify(videoElement.props)} time: ${time}`);
-        await videoElement.loadSource(source.url);
+        await videoElement.loadSource(source.streamUrl);
         await this.seek(time);
         if (wasPlaying) {
             await this.play();
@@ -231,7 +238,6 @@ class VideoViewer extends Component {
         this.setState({userDefinedPanZoom: true});
     }
 
-
     shortCutHandlers = [
         [COMMANDS.STEP_FORWARD, () => this.step(25)],
         [COMMANDS.STEP_FORWARD_FRAME, () => this.step(1)],
@@ -252,6 +258,7 @@ class VideoViewer extends Component {
         [COMMANDS.PAN_RIGHT, () => this.pan(-10, 0)],
         [COMMANDS.PAN_LEFT, () => this.pan(10, 0)],
         [COMMANDS.REST_PAN_ZOOM, () => this.resetPanZoom()],
+        [COMMANDS.SHARE, () => this.createShareUrl()],
         [COMMANDS.PLAY, () => this.playForward()],
         [COMMANDS.PAUSE, () => this.pause()],
         [COMMANDS.TOGGLE_HELP, () => this.toggleShowHelp()],
@@ -311,7 +318,7 @@ class VideoViewer extends Component {
                             <FiPlay size="32px"/>
                         </div>
                     </SplitView>
-                    
+
                     <VideoControls visible={this.state.showSourceSelector}
                                    playing={this.state.playing}
                                    onPlay={() => this.playPause()}
