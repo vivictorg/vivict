@@ -13,6 +13,7 @@ import {openFullscreen, isFullscreen, closeFullscreen} from "../../util/Fullscre
 import {copyToClipboard} from "../../util/CopyClipboard";
 import {FiPlay} from 'react-icons/fi';
 import cx from 'classnames';
+import {isHlsPlaylist} from "../../util/HlsUtils";
 
 const DEFAULT_SOURCE_URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
 
@@ -26,14 +27,14 @@ const hideSourceSelector = Boolean(urlParams.get('hideSourceSelector'));
 const hideHelp = Boolean(urlParams.get('hideHelp'));
 
 const DEFAULT_SOURCE_LEFT = {
-    type: 'url',
+    type: isHlsPlaylist(leftVideoUrl) ? 'hls' : 'url',
     name: leftVideoUrl,
     url: leftVideoUrl,
     variant: leftVideoVariant,
     position: startPosition
 };
 const DEFAULT_SOURCE_RIGHT = {
-    type: 'url',
+    type:  isHlsPlaylist(rightVideoUrl) ? 'hls' : 'url',
     name: rightVideoUrl,
     url: rightVideoUrl,
     variant: rightVideoVariant,
@@ -165,9 +166,21 @@ class VideoViewer extends Component {
     }
 
     async createShareUrl() {
-        let path = `${window.location.host}/?position=${this.state.position}&leftVideoVariant=${this.state.leftSource.variant}&leftVideoUrl=${this.state.leftSource.url}&rightVideoVariant=${this.state.rightSource.variant}&rightVideoUrl=${this.state.rightSource.url}`;
-        console.log("Copying to clipboard: " + path)
-        copyToClipboard(path)
+        if (this.state.leftSource.type === 'file' || this.state.rightSource.type === 'file') {
+            alert("Shareable URL cannot be created since you are viewing a local file!");
+        } else {
+            const leftVariantParam = this.state.leftSource.type === 'hls' ?
+                `&leftVideoVariant=${this.state.leftSource.variant}` : "";
+            const rightVariantParam = this.state.rightSource.type === 'hls' ?
+                `&rightVideoVariant=${this.state.rightSource.variant}` : "";
+            const path = `${window.location.host}/?position=${this.state.position}`
+            + `&leftVideoUrl=${this.state.leftSource.url}${leftVariantParam}`
+            + `&rightVideoUrl=${this.state.rightSource.url}${rightVariantParam}`
+            + (!this.state.showSourceSelector ? `&hideSourceSelector=true` : "")
+            + (!this.state.showHelp ? `&hideHelp=true` : "")
+            console.log("Copying to clipboard: " + path);
+            copyToClipboard(path)
+        }
     }
 
     async pause() {

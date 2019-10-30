@@ -89,7 +89,7 @@ class SourceSelector extends Component {
         console.log(`url: ${url}`);
         this.hideUrlInput();
         this.changeSource({
-            type: 'url',
+            type: isHlsPlaylist(url) ? 'hls': 'url',
             name: url,
             url: url
         })
@@ -101,7 +101,8 @@ class SourceSelector extends Component {
             this.changeSource({
                 type: 'file',
                 name: file.name,
-                url: window.URL.createObjectURL(file),
+                url: null,
+                streamUrl: window.URL.createObjectURL(file),
             });
         }
     }
@@ -113,28 +114,33 @@ class SourceSelector extends Component {
     }
 
     setVariant(selectedVariant) {
-        this.setState({hls: Object.assign({}, this.state.hls, {selectedVariant})});
         const streamUrl = this.state.hls.variants[selectedVariant].url;
+        this.setState({hls: Object.assign({}, this.state.hls, {selectedVariant, streamUrl})});
         this.props.onChange(Object.assign({}, this.state.source, {streamUrl, variant: selectedVariant}));
     }
 
     changeSource(source) {
+        console.log(`SourceSelector.changeSource: ${JSON.stringify(source)}`);
         const prevSource = this.state.source;
-        if (isHlsPlaylist(source.url)) {
+        if (source.type === 'hls') {
             this.setState({source, mp4Info: null});
             this.loadHlsMetadata(source.url)
                 .then(() => {
                     this.setVariant(source.variant ? source.variant : 0);
-                    if (prevSource.type === 'file' && prevSource.url) {
+                    if (prevSource.type === 'file' && prevSource.streamUrl) {
                         window.URL.revokeObjectURL(prevSource);
                     }
                 });
         } else {
+            if (source.type === 'url') {
+                source.streamUrl = source.url;
+            }
             this.setState({source, hls: null});
-            this.loadMp4Metadata(source.url);
-            this.props.onChange(Object.assign({}, this.state.source, {streamUrl: source.url}));
-            if (prevSource.type === 'file' && prevSource.url) {
-                window.URL.revokeObjectURL(prevSource);
+
+            this.loadMp4Metadata(source.streamUrl);
+            this.props.onChange(Object.assign({}, source));
+            if (prevSource.type === 'file' && prevSource.streamUrl) {
+                window.URL.revokeObjectURL(prevSource.streamUrl);
             }
         }
     }
