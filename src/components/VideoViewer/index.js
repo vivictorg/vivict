@@ -176,8 +176,8 @@ class VideoViewer extends Component {
             const path = `${window.location.host}/?position=${this.state.position}`
             + `&leftVideoUrl=${this.state.leftSource.url}${leftVariantParam}`
             + `&rightVideoUrl=${this.state.rightSource.url}${rightVariantParam}`
-            + (!this.state.showSourceSelector ? `&hideSourceSelector=true` : "")
-            + (!this.state.showHelp ? `&hideHelp=true` : "")
+            + (urlParams.get('hideSourceSelector') ? `&hideSourceSelector=${urlParams.get('hideSourceSelector')}` : "")
+            + (urlParams.get('hideHelp') ? `&hideHelp=${urlParams.get('hideHelp')}` : "")
             console.log("Copying to clipboard: " + path);
             copyToClipboard(path)
         }
