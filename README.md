@@ -25,7 +25,7 @@ If you want to programmatically change the sources or the playback position, you
 - `rightVideoUrl` – sets the right video source
 - `leftVideoVariant` – sets the left video HLS variant
 - `rightVideoVariant` – sets the right video HLS variant
-- `startPosition` – sets the start position in seconds
+- `position` – sets the start position in seconds
 - `hideHelp` – if 1, hides the automatic help menu
 - `hideSourceSelector` – if 1, hides the source selection menu
 
