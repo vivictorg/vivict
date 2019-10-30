@@ -7,7 +7,6 @@ const command = (name, keys, description) => ({
 });
 
 export const COMMANDS = {
-
         PLAY: command('PLAY', 'l', 'Play video'),
         PAUSE: command('PAUSE', 'k', 'Pause video'),
         PLAY_PAUSE: command('PLAY_PAUSE', 'space', 'Play/Pause video'),
@@ -16,6 +15,7 @@ export const COMMANDS = {
         STEP_FORWARD: command('STEP_FORWARD', ['/', '-'], 'Step forward 1 second'),
         STEP_BACKWARD: command('STEP_BACKWARD', 'm', 'Step backward 1 second'),
         FULLSCREEN: command('FULLSCREEN', 'f', 'Toggle full screen'),
+        SHARE: command('SHARE', 'c', 'Copy shareable url to clipboard'),
         TOGGLE_TRACKING: command('TOGGLE_TRACKING', 't', 'Toggle split position follows mouse'),
         LEFT_ONLY: command('LEFT_ONLY', ']', 'View only left video'),
         RIGHT_ONLY: command('RIGHT_ONLY', '[', 'View only right video'),
@@ -37,33 +37,3 @@ export const COMMANDS = {
 export const KEY_MAP = Object.keys(COMMANDS).reduce((result, key) => Object.assign(result, {[COMMANDS[key].name]: COMMANDS[key].keys}), {});
 
 console.log(`KEY_MAP: ${JSON.stringify(KEY_MAP)}`);
-
-/*
-export const KEY_MAP =
-    {
-        frameForward10: '/',
-        frameForward1: '.',
-        frameRewind1: ',',
-        frameRewind10: 'm',
-        playPause: 'space',
-        playForward: 'l',
-        pause: 'k',
-        playReverse: 'j',
-        fullscreen: 'f',
-        toggleTracking: 't',
-        leftOnly: ']',
-        rightOnly: '[',
-        offsetDecrease: '<',
-        offsetIncrease: '>',
-        zoomIn: 'u',
-        zoomOut: 'i',
-        panUp: 'up',
-        panDown: 'down',
-        panRight: 'right',
-        panLeft: 'left',
-        resetPanZoom: '0'
-
-    };
-
-export default KEY_MAP;
-*/

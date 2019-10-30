@@ -1,6 +1,7 @@
 import {Parser} from 'm3u8-parser';
 
 export function isHlsPlaylist(url) {
+    if (!url) return false;
     return url.split('?')[0].endsWith('.m3u8');
 }
 
