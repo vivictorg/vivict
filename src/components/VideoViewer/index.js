@@ -173,7 +173,7 @@ class VideoViewer extends Component {
                 `&leftVideoVariant=${this.state.leftSource.variant}` : "";
             const rightVariantParam = this.state.rightSource.type === 'hls' ?
                 `&rightVideoVariant=${this.state.rightSource.variant}` : "";
-            const path = `${window.location.host}/?position=${this.state.position}`
+            const path = `${window.location.host}${window.location.pathname}?position=${this.state.position}`
             + `&leftVideoUrl=${this.state.leftSource.url}${leftVariantParam}`
             + `&rightVideoUrl=${this.state.rightSource.url}${rightVariantParam}`
             + (urlParams.get('hideSourceSelector') ? `&hideSourceSelector=${urlParams.get('hideSourceSelector')}` : "")
