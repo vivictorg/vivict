@@ -4,6 +4,7 @@ import cx from 'classnames';
 import './index.css';
 import {isHlsPlaylist, parseHlsManifest} from '../../util/HlsUtils';
 import mp4Info from '../../util/Mp4Info';
+import {isDashManifest, parseDashManifest} from "../../util/DashUtils";
 
 class SourceSelector extends Component {
 
@@ -13,6 +14,7 @@ class SourceSelector extends Component {
         this.urlInputKeyDown = this.urlInputKeyDown.bind(this);
         this.state = {
             source: this.props.defaultSource,
+            metadata: null,
             showUrlInput: false,
             visible: this.props.visible
         };
@@ -23,16 +25,29 @@ class SourceSelector extends Component {
     }
 
     async loadHlsMetadata(url) {
-        const hlsMetadata = await parseHlsManifest(url);
-        this.setState({hls: hlsMetadata});
+        const metadata = await parseHlsManifest(url);
+        this.setState({metadata});
     }
 
-    loadMp4Metadata(url) {
-        mp4Info(url)
-            .then((mp4Info) => {
-                this.setState({mp4Info})
-            })
-            .catch(e => console.trace(e));
+    async loadDashMetadata(url) {
+        const metadata = await parseDashManifest(url);
+        this.setState({metadata})
+    }
+
+    async loadMp4Metadata(url) {
+        const mp4Info = await mp4Info(url);
+
+        const videoTrack = mp4Info.videoTracks[0];
+        const metadata = {
+            variants: [
+                {
+                    bitrate: videoTrack.bitrate,
+                    width: videoTrack.video.width,
+                    height: videoTrack.video.height
+                }
+            ]
+        };
+        this.setState({metadata})
     }
 
     componentDidMount() {
@@ -88,8 +103,14 @@ class SourceSelector extends Component {
     onUrlSelected(url) {
         console.log(`url: ${url}`);
         this.hideUrlInput();
+        let type = 'url';
+        if (isHlsPlaylist(url)) {
+            type = 'hls';
+        } else if (isDashManifest(url)) {
+            type = 'dash';
+        }
         this.changeSource({
-            type: isHlsPlaylist(url) ? 'hls': 'url',
+            type,
             name: url,
             url: url
         })
@@ -101,48 +122,45 @@ class SourceSelector extends Component {
             this.changeSource({
                 type: 'file',
                 name: file.name,
-                url: null,
-                streamUrl: window.URL.createObjectURL(file),
+                url: window.URL.createObjectURL(file),
             });
         }
     }
 
     onVariantSelected(evt) {
         console.log(`variant selected: ${evt.target.value}`);
-        const selectedVariant = evt.target.value;
+        const selectedVariant = parseInt(evt.target.value);
         this.setVariant(selectedVariant);
     }
 
     setVariant(selectedVariant) {
-        const streamUrl = this.state.hls.variants[selectedVariant].url;
-        this.setState({hls: Object.assign({}, this.state.hls, {selectedVariant, streamUrl})});
-        this.props.onChange(Object.assign({}, this.state.source, {streamUrl, variant: selectedVariant}));
+        this.setState({selectedVariant});
+        if (this.props.onVariantChange) {
+            this.props.onVariantChange(selectedVariant);
+        }
+    }
+
+    async loadMetadata(source) {
+        if (source.type === 'hls') {
+            await this.loadHlsMetadata(source.url)
+        } else if (source.type === 'dash') {
+            await this.loadDashMetadata(source.url);
+        } else {
+            await this.loadMp4Metadata(source.url);
+        }
     }
 
     changeSource(source) {
         console.log(`SourceSelector.changeSource: ${JSON.stringify(source)}`);
         const prevSource = this.state.source;
-        if (source.type === 'hls') {
-            this.setState({source, mp4Info: null});
-            this.loadHlsMetadata(source.url)
-                .then(() => {
-                    this.setVariant(source.variant ? source.variant : 0);
-                    if (prevSource.type === 'file' && prevSource.streamUrl) {
-                        window.URL.revokeObjectURL(prevSource);
-                    }
-                });
-        } else {
-            if (source.type === 'url') {
-                source.streamUrl = source.url;
-            }
-            this.setState({source, hls: null});
-
-            this.loadMp4Metadata(source.streamUrl);
-            this.props.onChange(Object.assign({}, source));
-            if (prevSource.type === 'file' && prevSource.streamUrl) {
-                window.URL.revokeObjectURL(prevSource.streamUrl);
-            }
-        }
+        this.loadMetadata(source)
+            .then(() => {
+              //  this.setVariant(source.variant ? source.variant : 0);
+                this.props.onChange(Object.assign({}, source));
+                if (prevSource.type === 'file' && prevSource.url) {
+                    window.URL.revokeObjectURL(prevSource);
+                }
+            });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -152,7 +170,7 @@ class SourceSelector extends Component {
     }
 
     currentUrl() {
-        return this.state.source.type === 'url' ? this.state.source.url : '';
+        return this.state.source.type === 'file' ? '' : this.state.source.url;
     }
 
     formatMetadata(bitrate, width, height) {
@@ -163,23 +181,23 @@ class SourceSelector extends Component {
         if (this.state.showUrlInput) {
             return null;
         }
+        const metadata = this.state.metadata;
         let metadataSpan = null;
-        if (this.state.hls) {
-            const options = this.state.hls.variants.map( (variant, i) => {
-               return (<option
-                   key={i}
-                   value={i}
-               >
-                   {this.formatMetadata(variant.bandwidth,variant.width, variant.height)}
-               </option>);
-            });
-            metadataSpan = (<select value={this.state.hls.selectedVariant} onChange={(e) => this.onVariantSelected(e)}>{options}</select>);
-        } else if (this.state.mp4Info) {
-            const videoTrack = this.state.mp4Info.videoTracks[0];
-            const bitrate = videoTrack.bitrate;
-            const width = videoTrack.video.width;
-            const height = videoTrack.video.height;
-            metadataSpan = (<span>{this.formatMetadata(bitrate, width, height)}</span>);
+        if (metadata) {
+            if (metadata.variants.length > 1) {
+                const options = metadata.variants.map( (variant, i) => {
+                    return (<option
+                        key={i}
+                        value={i}
+                    >
+                        {this.formatMetadata(variant.bandwidth,variant.width, variant.height)}
+                    </option>);
+                });
+                metadataSpan = (<select value={this.state.selectedVariant} onChange={(e) => this.onVariantSelected(e)}>{options}</select>);
+            } else if (metadata.variants.length === 1) {
+                const variant = metadata.variants[0];
+                metadataSpan = (<span>{this.formatMetadata(variant.bitrate, variant.width, variant.height)}</span>);
+            }
         }
         return (<div className="source-metadata">
             <div className="source-name" title={this.state.source.name}>{this.state.source.name}</div>

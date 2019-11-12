@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Hls from 'hls.js'
+import dashjs from 'dashjs';
 import {isHlsPlaylist} from "../../util/HlsUtils";
+import {isDashManifest} from "../../util/DashUtils";
 
 const zoomInMultiplier = 1.1;
 const zoomOutMultiplier = 1/zoomInMultiplier;
@@ -104,10 +106,38 @@ class VideoPlayer extends Component {
                 { once: true });
             if (isHlsPlaylist(url)) {
                 this.loadHls(url)
+            } else if (isDashManifest(url)) {
+                this.loadDash(url);
             } else {
                 this.videoElement.src = url;
             }
         });
+    }
+
+    setVariant(variant) {
+        console.log(`setVariant: ${variant}`);
+        if (this.state.dash) {
+            this.state.dash.setQualityFor('video', variant);
+        } else if (this.state.hls) {
+            this.state.hls.currentLevel = variant;
+        }
+    }
+
+    loadDash(url) {
+        let dash = this.state.dash;
+        if (!dash) {
+            dash = dashjs.MediaPlayer().create();
+            this.setState({dash});
+        }
+        dash.updateSettings({
+           streaming: {
+               abr: {
+                   initialBitrate: { audio: 0, video: 0 },
+                   autoSwitchBitrate: { audio: false, video: false }
+               }
+           }
+        });
+        dash.initialize(this.videoElement, url, false);
     }
 
     loadHls(url) {
@@ -118,6 +148,8 @@ class VideoPlayer extends Component {
         }
         hls.loadSource(url);
         hls.attachMedia(this.videoElement);
+        hls.currentLevel = 0;
+
 
     }
 

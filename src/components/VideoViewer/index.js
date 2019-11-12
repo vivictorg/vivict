@@ -14,11 +14,15 @@ import {copyToClipboard} from "../../util/CopyClipboard";
 import {FiPlay} from 'react-icons/fi';
 import cx from 'classnames';
 import {isHlsPlaylist} from "../../util/HlsUtils";
+import {sourceType} from "../../util/SourceUtils";
 
-const DEFAULT_SOURCE_URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+const DEFAULT_HLS_SOURCE = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+const DEFAULT_DASH_SOURCE = "https://dash.akamaized.net/dash264/TestCases/2a/qualcomm/1/MultiResMPEG2.mpd";
+const DEFAULT_SOURCE = DEFAULT_HLS_SOURCE;
+
 
 const urlParams = new URLSearchParams(window.location.search);
-const leftVideoUrl = urlParams.get('leftVideoUrl') || DEFAULT_SOURCE_URL;
+const leftVideoUrl = urlParams.get('leftVideoUrl') || DEFAULT_SOURCE;
 const rightVideoUrl = urlParams.get('rightVideoUrl') || leftVideoUrl;
 const leftVideoVariant = urlParams.get('leftVideoVariant') || 0;
 const rightVideoVariant = urlParams.get('rightVideoVariant') || 0;
@@ -27,14 +31,14 @@ const hideSourceSelector = Boolean(urlParams.get('hideSourceSelector'));
 const hideHelp = Boolean(urlParams.get('hideHelp'));
 
 const DEFAULT_SOURCE_LEFT = {
-    type: isHlsPlaylist(leftVideoUrl) ? 'hls' : 'url',
+    type: sourceType(leftVideoUrl),
     name: leftVideoUrl,
     url: leftVideoUrl,
     variant: leftVideoVariant,
     position: startPosition
 };
 const DEFAULT_SOURCE_RIGHT = {
-    type:  isHlsPlaylist(rightVideoUrl) ? 'hls' : 'url',
+    type:  sourceType(leftVideoUrl),
     name: rightVideoUrl,
     url: rightVideoUrl,
     variant: rightVideoVariant,
@@ -198,12 +202,21 @@ class VideoViewer extends Component {
         return Promise.all([this.leftVideo.seek(pos), this.rightVideo.seek(pos + this.state.rightVideoOffset * 0.04)]);
     }
 
+    async onLeftVariantChange(variant) {
+        console.log(`left variant changed: ${JSON.stringify(variant)}`);
+        await this.changeVariant(this.leftVideo, variant)
+    }
+
+    async onRightVariantChange(variant) {
+        console.log(`right variant changed: ${JSON.stringify(variant)}`);
+        await this.changeVariant(this.rightVideo, variant)
+    }
+
     async onLeftSourceChange(source) {
         await this.changeSource(this.leftVideo, source);
         this.setLeftSource(source);
         this.splitView.focus();
     }
-
 
     async onRightSourceChange(source) {
         await this.changeSource(this.rightVideo, source);
@@ -211,13 +224,25 @@ class VideoViewer extends Component {
         this.splitView.focus();
     }
 
+    async changeVariant(videoElement, variant) {
+        this.pauseAndExecute(videoElement, async () => {
+            await videoElement.setVariant(variant);
+        });
+    }
+
     async changeSource(videoElement, source) {
+        this.pauseAndExecute(videoElement, async () => {
+            await videoElement.loadSource(source.url);
+        });
+    }
+
+    async pauseAndExecute(videoElement, action) {
         const wasPlaying = this.state.playing;
         const wasPlayingReverse = this.state.playReverse;
         await this.pause();
         const time = videoElement.currentTime();
         console.log(`${JSON.stringify(videoElement.props)} time: ${time}`);
-        await videoElement.loadSource(source.streamUrl);
+        await action();
         await this.seek(time);
         if (wasPlaying) {
             await this.play();
@@ -345,11 +370,13 @@ class VideoViewer extends Component {
                     <SourceSelector visible={this.state.showSourceSelector}
                                     className="left-source-selector"
                                     defaultSource={DEFAULT_SOURCE_LEFT}
-                                    onChange={(value) => this.onLeftSourceChange(value)} />
+                                    onChange={(value) => this.onLeftSourceChange(value)}
+                                    onVariantChange={(value) => this.onLeftVariantChange(value)}/>
                     <SourceSelector visible={this.state.showSourceSelector}
                                     className="right-source-selector"
                                     defaultSource={DEFAULT_SOURCE_RIGHT}
-                                    onChange={(value) => this.onRightSourceChange(value)} />
+                                    onChange={(value) => this.onRightSourceChange(value)}
+                                    onVariantChange={(value) => this.onRightVariantChange(value)}/>
                     <OffsetIndicator offset={this.state.rightVideoOffset}/>
                     <Help visible={this.state.showHelp} onClick={() => this.toggleShowHelp()} />
                     <HelpButton onClick={() => this.toggleShowHelp()} />
