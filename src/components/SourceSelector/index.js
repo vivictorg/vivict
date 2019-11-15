@@ -112,7 +112,8 @@ class SourceSelector extends Component {
         this.changeSource({
             type,
             name: url,
-            url: url
+            url: url,
+            variant: 0
         })
     }
 
@@ -134,7 +135,8 @@ class SourceSelector extends Component {
     }
 
     setVariant(selectedVariant) {
-        this.setState({selectedVariant});
+        const source = Object.assign({}, this.state.source, {variant: selectedVariant});
+        this.setState({source});
         if (this.props.onVariantChange) {
             this.props.onVariantChange(selectedVariant);
         }
@@ -155,7 +157,7 @@ class SourceSelector extends Component {
         const prevSource = this.state.source;
         this.loadMetadata(source)
             .then(() => {
-              //  this.setVariant(source.variant ? source.variant : 0);
+                this.setState({source});
                 this.props.onChange(Object.assign({}, source));
                 if (prevSource.type === 'file' && prevSource.url) {
                     window.URL.revokeObjectURL(prevSource);
@@ -189,6 +191,7 @@ class SourceSelector extends Component {
                     return (<option
                         key={i}
                         value={i}
+                        selected={i === this.state.source.variant}
                     >
                         {this.formatMetadata(variant.bandwidth,variant.width, variant.height)}
                     </option>);

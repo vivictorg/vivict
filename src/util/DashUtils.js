@@ -3,7 +3,7 @@ import {parse} from "mpd-parser";
 export async function parseDashManifest(url) {
     const response = await fetch(url);
     const manifestText = await response.text();
-
+    console.log("RAW DASH MANIFEST:" + manifestText);
     const manifest = parse(manifestText);
     console.log("DASH MANIFEST:\n" + JSON.stringify(manifest));
 

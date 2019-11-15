@@ -14,18 +14,21 @@ import {copyToClipboard} from "../../util/CopyClipboard";
 import {FiPlay} from 'react-icons/fi';
 import cx from 'classnames';
 import {isHlsPlaylist} from "../../util/HlsUtils";
-import {sourceType} from "../../util/SourceUtils";
+import {isDashOrHls, sourceType} from "../../util/SourceUtils";
 
-const DEFAULT_HLS_SOURCE = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
-const DEFAULT_DASH_SOURCE = "https://dash.akamaized.net/dash264/TestCases/2a/qualcomm/1/MultiResMPEG2.mpd";
-const DEFAULT_SOURCE = DEFAULT_HLS_SOURCE;
+const DEFAULT_SOURCES = {
+    hls: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+    dash: "https://dash.akamaized.net/dash264/TestCases/2a/qualcomm/1/MultiResMPEG2.mpd",
+    av1: "https://storage.googleapis.com/bitmovin-demos/av1/stream.mpd"
+};
 
 
 const urlParams = new URLSearchParams(window.location.search);
+const DEFAULT_SOURCE = DEFAULT_SOURCES[urlParams.get('defaultSource') ? urlParams.get('defaultSource') : 'hls'];
 const leftVideoUrl = urlParams.get('leftVideoUrl') || DEFAULT_SOURCE;
 const rightVideoUrl = urlParams.get('rightVideoUrl') || leftVideoUrl;
-const leftVideoVariant = urlParams.get('leftVideoVariant') || 0;
-const rightVideoVariant = urlParams.get('rightVideoVariant') || 0;
+const leftVideoVariant = Number(urlParams.get('leftVideoVariant')) || 0;
+const rightVideoVariant = Number(urlParams.get('rightVideoVariant')) || 0;
 const startPosition = Number(urlParams.get('position')) || 0;
 const hideSourceSelector = Boolean(urlParams.get('hideSourceSelector'));
 const hideHelp = Boolean(urlParams.get('hideHelp'));
@@ -173,9 +176,9 @@ class VideoViewer extends Component {
         if (this.state.leftSource.type === 'file' || this.state.rightSource.type === 'file') {
             alert("Shareable URL cannot be created since you are viewing a local file!");
         } else {
-            const leftVariantParam = this.state.leftSource.type === 'hls' ?
+            const leftVariantParam = isDashOrHls(this.state.leftSource.type) ?
                 `&leftVideoVariant=${this.state.leftSource.variant}` : "";
-            const rightVariantParam = this.state.rightSource.type === 'hls' ?
+            const rightVariantParam = isDashOrHls(this.state.rightSource.type) ?
                 `&rightVideoVariant=${this.state.rightSource.variant}` : "";
             const path = `${window.location.host}${window.location.pathname}?position=${this.state.position}`
             + `&leftVideoUrl=${this.state.leftSource.url}${leftVariantParam}`
@@ -226,13 +229,16 @@ class VideoViewer extends Component {
 
     async changeVariant(videoElement, variant) {
         this.pauseAndExecute(videoElement, async () => {
+            this.setState({leftSource: Object.assign({}, this.state.leftSource, {variant})});
             await videoElement.setVariant(variant);
+            await this.step(0); // Seek to current time to improve dash switching time?
         });
     }
 
     async changeSource(videoElement, source) {
+        console.log(`Change source ${source.url} ${source.variant}`);
         this.pauseAndExecute(videoElement, async () => {
-            await videoElement.loadSource(source.url);
+            await videoElement.loadSource(source.url, source.variant);
         });
     }
 

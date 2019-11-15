@@ -96,8 +96,8 @@ class VideoPlayer extends Component {
     }
 
 
-    async loadSource(url) {
-        console.log(`load source: ${url}`);
+    async loadSource(url, variant) {
+        console.log(`load source: ${url} ${variant}`);
         return new Promise((resolve, reject) => {
             this.videoElement.addEventListener('canplay',
                 () => {
@@ -105,9 +105,9 @@ class VideoPlayer extends Component {
                 },
                 { once: true });
             if (isHlsPlaylist(url)) {
-                this.loadHls(url)
+                this.loadHls(url, variant)
             } else if (isDashManifest(url)) {
-                this.loadDash(url);
+                this.loadDash(url, variant);
             } else {
                 this.videoElement.src = url;
             }
@@ -117,13 +117,14 @@ class VideoPlayer extends Component {
     setVariant(variant) {
         console.log(`setVariant: ${variant}`);
         if (this.state.dash) {
+            console.log(`setting quality level`);
             this.state.dash.setQualityFor('video', variant);
         } else if (this.state.hls) {
             this.state.hls.currentLevel = variant;
         }
     }
 
-    loadDash(url) {
+    loadDash(url, variant) {
         let dash = this.state.dash;
         if (!dash) {
             dash = dashjs.MediaPlayer().create();
@@ -131,16 +132,21 @@ class VideoPlayer extends Component {
         }
         dash.updateSettings({
            streaming: {
+               fastSwitchEnabled: true,
                abr: {
-                   initialBitrate: { audio: 0, video: 0 },
                    autoSwitchBitrate: { audio: false, video: false }
                }
            }
         });
+        this.videoElement.addEventListener('canplay',
+            () => {
+                this.state.dash.setQualityFor('video', variant);
+            },
+            { once: true });
         dash.initialize(this.videoElement, url, false);
     }
 
-    loadHls(url) {
+    loadHls(url, variant) {
         let hls = this.state.hls;
         if (!hls) {
             hls = new Hls();
@@ -148,9 +154,7 @@ class VideoPlayer extends Component {
         }
         hls.loadSource(url);
         hls.attachMedia(this.videoElement);
-        hls.currentLevel = 0;
-
-
+        hls.currentLevel = variant;
     }
 
     currentTime() {

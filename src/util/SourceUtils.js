@@ -9,5 +9,8 @@ export function sourceType(url) {
         return 'dash';
     }
     return 'url';
+}
 
+export function isDashOrHls(type) {
+    return type === 'hls' || type === 'dash';
 }
