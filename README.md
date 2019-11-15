@@ -67,9 +67,12 @@ If you think the shortcuts could be better, feel free to suggest a setup!
 
 ## Supported codecs and container formats
 
-Depends on the browser. mp4 and h264 should work. HLS is supported through
+Depends on the browser. mp4 and h264 should generally work. h265 should work in safari.
 
- [hls.js](https://github.com/video-dev/hls.js/)
+
+HLS is supported through [hls.js](https://github.com/video-dev/hls.js/)
+ 
+MPEG-DASH is supported through [dash.js](https://github.com/video-dev/dash.js/)
 
 ## Supported browsers
 
