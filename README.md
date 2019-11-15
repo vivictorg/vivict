@@ -68,7 +68,7 @@ If you think the shortcuts could be better, feel free to suggest a setup!
 ## Supported codecs and container formats
 
 Depends on the browser. mp4 and h264 should generally work. h265 should work in safari.
-
+ AV1 works in firefox.
 
 HLS is supported through [hls.js](https://github.com/video-dev/hls.js/)
  

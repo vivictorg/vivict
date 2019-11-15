@@ -41,7 +41,7 @@ const DEFAULT_SOURCE_LEFT = {
     position: startPosition
 };
 const DEFAULT_SOURCE_RIGHT = {
-    type:  sourceType(leftVideoUrl),
+    type:  sourceType(rightVideoUrl),
     name: rightVideoUrl,
     url: rightVideoUrl,
     variant: rightVideoVariant,
@@ -231,7 +231,7 @@ class VideoViewer extends Component {
         this.pauseAndExecute(videoElement, async () => {
             this.setState({leftSource: Object.assign({}, this.state.leftSource, {variant})});
             await videoElement.setVariant(variant);
-            await this.step(0); // Seek to current time to improve dash switching time?
+            //await this.step(0); // Seek to current time to improve dash switching time?
         });
     }
 

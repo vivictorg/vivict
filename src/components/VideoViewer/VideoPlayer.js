@@ -117,7 +117,6 @@ class VideoPlayer extends Component {
     setVariant(variant) {
         console.log(`setVariant: ${variant}`);
         if (this.state.dash) {
-            console.log(`setting quality level`);
             this.state.dash.setQualityFor('video', variant);
         } else if (this.state.hls) {
             this.state.hls.currentLevel = variant;
@@ -125,28 +124,35 @@ class VideoPlayer extends Component {
     }
 
     loadDash(url, variant) {
-        let dash = this.state.dash;
-        if (!dash) {
-            dash = dashjs.MediaPlayer().create();
-            this.setState({dash});
+        if (this.state.hls) {
+            this.state.hls.detachMedia();
+            this.setState({hls: null});
         }
-        dash.updateSettings({
-           streaming: {
-               fastSwitchEnabled: true,
-               abr: {
-                   autoSwitchBitrate: { audio: false, video: false }
-               }
-           }
-        });
+        let dash = this.state.dash;
         this.videoElement.addEventListener('canplay',
             () => {
                 this.state.dash.setQualityFor('video', variant);
             },
-            { once: true });
-        dash.initialize(this.videoElement, url, false);
+            {once: true});
+        if (!dash) {
+            dash = dashjs.MediaPlayer().create();
+            this.setState({dash});
+            dash.updateSettings({
+                streaming: {
+                    fastSwitchEnabled: true,
+                    abr: {
+                        autoSwitchBitrate: {audio: false, video: false}
+                    }
+                }
+            });
+            dash.initialize(this.videoElement, url, false);
+        } else {
+            dash.attachSource(url);
+        }
     }
 
     loadHls(url, variant) {
+        this.setState({dash: null});
         let hls = this.state.hls;
         if (!hls) {
             hls = new Hls();

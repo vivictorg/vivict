@@ -129,7 +129,6 @@ class SourceSelector extends Component {
     }
 
     onVariantSelected(evt) {
-        console.log(`variant selected: ${evt.target.value}`);
         const selectedVariant = parseInt(evt.target.value);
         this.setVariant(selectedVariant);
     }
@@ -153,7 +152,6 @@ class SourceSelector extends Component {
     }
 
     changeSource(source) {
-        console.log(`SourceSelector.changeSource: ${JSON.stringify(source)}`);
         const prevSource = this.state.source;
         this.loadMetadata(source)
             .then(() => {

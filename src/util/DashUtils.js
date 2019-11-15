@@ -1,4 +1,4 @@
-import {parse} from "mpd-parser";
+import {parse} from "mpd-parser/src/";
 
 export async function parseDashManifest(url) {
     const response = await fetch(url);
