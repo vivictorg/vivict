@@ -1,6 +1,13 @@
 import MP4Box from 'mp4box';
 
 async function fetchUntilDone(url, onData,isDone, chunkSize = 10 * 1024 * 1024) {
+    if (url.startsWith("blob:")) {
+        const res = await fetch(url);
+        const data = await res.arrayBuffer();
+        data.fileStart = 0;
+        onData(data);
+        return;
+    }
     let start = 0;
     let end = chunkSize;
     while(!isDone()) {
@@ -33,7 +40,7 @@ async function fetchRange(url, range) {
     }
 }
 
-async function mp4Info(url) {
+export async function mp4Info(url) {
     console.log(`mp4Info: ${url}`);
     let done = false;
     const mp4boxfile = new MP4Box.MP4Box();
@@ -63,5 +70,3 @@ async function mp4Info(url) {
 
     return mp4InfoPromise
 }
-
-export default mp4Info;

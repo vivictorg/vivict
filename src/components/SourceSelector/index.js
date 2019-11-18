@@ -3,7 +3,7 @@ import {FiFile, FiGlobe} from "react-icons/fi";
 import cx from 'classnames';
 import './index.css';
 import {isHlsPlaylist, parseHlsManifest} from '../../util/HlsUtils';
-import mp4Info from '../../util/Mp4Info';
+import {mp4Info} from '../../util/Mp4Info';
 import {isDashManifest, parseDashManifest} from "../../util/DashUtils";
 
 class SourceSelector extends Component {
@@ -35,9 +35,9 @@ class SourceSelector extends Component {
     }
 
     async loadMp4Metadata(url) {
-        const mp4Info = await mp4Info(url);
+        const mp4Metadata = await mp4Info(url);
 
-        const videoTrack = mp4Info.videoTracks[0];
+        const videoTrack = mp4Metadata.videoTracks[0];
         const metadata = {
             variants: [
                 {
@@ -158,7 +158,7 @@ class SourceSelector extends Component {
                 this.setState({source});
                 this.props.onChange(Object.assign({}, source));
                 if (prevSource.type === 'file' && prevSource.url) {
-                    window.URL.revokeObjectURL(prevSource);
+                    window.URL.revokeObjectURL(prevSource.url);
                 }
             });
     }
