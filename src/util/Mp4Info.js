@@ -43,7 +43,7 @@ async function fetchRange(url, range) {
 export async function mp4Info(url) {
     console.log(`mp4Info: ${url}`);
     let done = false;
-    const mp4boxfile = new MP4Box.MP4Box();
+    const mp4boxfile = new MP4Box.createFile();
 
     const mp4InfoPromise = new Promise((resolve, reject) => {
         mp4boxfile.onError = e => {
