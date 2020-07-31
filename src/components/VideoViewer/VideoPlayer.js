@@ -3,6 +3,7 @@ import Hls from 'hls.js'
 import dashjs from 'dashjs';
 import {isHlsPlaylist} from "../../util/HlsUtils";
 import {isDashManifest} from "../../util/DashUtils";
+import {pHash} from "../../util/Phash";
 
 const zoomInMultiplier = 1.1;
 const zoomOutMultiplier = 1/zoomInMultiplier;
@@ -20,6 +21,9 @@ class VideoPlayer extends Component {
         this.setVideoRef =  (videoRef) => {
             this.videoElement = videoRef;
         };
+        this.fingerprint = "";
+        this.fingerprint_ts = -1;
+        this.quality = 1;
     }
 
     onTimeUpdate() {
@@ -95,6 +99,38 @@ class VideoPlayer extends Component {
         })
     }
 
+    // Phash calculation call-back
+    calculatePhash() {
+        this.analyzeFrame();
+        // Render every 10 ms
+        var self = this;
+        setTimeout(function () {
+            self.calculatePhash();
+          }, 0);
+    };
+    // get current frames perceptual fingerprint
+    getFingerprint() {
+        return this.fingerprint_ts + ":" + this.fingerprint;
+    }
+    // enable or disable phash processing of each frame, 0 or 1
+    setQuality(val) {
+        this.quality = val;
+    }
+    // Compute PHash hamming distance between left and right frames
+    analyzeFrame() {
+        // Acquire a video frame from the video element
+        // Setup canvas for Phash analyzing
+        if (this.videoElement == null || this.fingerprint_ts == this.videoElement.currentTime) {
+            return;
+        }
+        // calculate phash
+        if (this.videoElement != null) {
+            this.fingerprint_ts = this.videoElement.currentTime;
+            this.fingerprint = pHash(this.videoElement);
+        } else {
+            console.log(`analyzeFrame(): videoElement is null, can't pHash(videoElement)!`);
+        }
+    }
 
     async loadSource(url, variant) {
         console.log(`load source: ${url} ${variant}`);
@@ -110,6 +146,11 @@ class VideoPlayer extends Component {
                 this.loadDash(url, variant);
             } else {
                 this.videoElement.src = url;
+                this.videoElement.crossOrigin = "Anonymous";
+                if (this.quality == 1) {
+                    this.videoElement.addEventListener('play', this.calculatePhash());
+                    console.log("Setup pHash event listener");
+                }
             }
         });
     }

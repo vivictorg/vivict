@@ -199,13 +199,28 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 }
 
 .time-display {
-    color: white;
+    color: yellow;
+    background: black;
     position: absolute;
     left: calc(50% - 45px);
     top: 4px;
     width: 90px;
-    height: 20px;
+    height: 30px;
     text-align: center;
-    line-height: 20px;
+    line-height: 30px;
+    z-index: 14;
+}
+
+.hamming-display {
+    color: yellow;
+    background: black;
+    position: absolute;
+    left: 4px);
+    top: 4px;
+    width: 250px;
+    height: 30px;
+    text-align: left;
+    line-height: 30px;
+    opacity: 0.6;
     z-index: 14;
 }

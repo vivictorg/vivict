@@ -6,6 +6,7 @@ import './index.css';
 import SourceSelector from '../SourceSelector'
 import SplitView from '../SplitView';
 import TimeDisplay from './TimeDisplay';
+import HammingDisplay from './HammingDisplay';
 import OffsetIndicator from './OffsetIndicator';
 import {Help, HelpButton} from '../Help';
 import {COMMANDS, KEY_MAP} from '../../keymap'
@@ -13,8 +14,8 @@ import {openFullscreen, isFullscreen, closeFullscreen} from "../../util/Fullscre
 import {copyToClipboard} from "../../util/CopyClipboard";
 import {FiPlay} from 'react-icons/fi';
 import cx from 'classnames';
-import {isHlsPlaylist} from "../../util/HlsUtils";
 import {isDashOrHls, sourceType} from "../../util/SourceUtils";
+import {hammingDistance} from "../../util/Phash";
 
 const DEFAULT_SOURCES = {
     hls: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
@@ -30,8 +31,11 @@ const rightVideoUrl = urlParams.get('rightVideoUrl') || leftVideoUrl;
 const leftVideoVariant = Number(urlParams.get('leftVideoVariant')) || 0;
 const rightVideoVariant = Number(urlParams.get('rightVideoVariant')) || 0;
 const startPosition = Number(urlParams.get('position')) || 0;
+const playDuration = Number(urlParams.get('duration')) || 0;
 const hideSourceSelector = Boolean(urlParams.get('hideSourceSelector'));
 const hideHelp = Boolean(urlParams.get('hideHelp'));
+const calcQuality = Boolean(urlParams.get('quality')) || true;
+const debugLog = Boolean(urlParams.get('debug'));
 
 const DEFAULT_SOURCE_LEFT = {
     type: sourceType(leftVideoUrl),
@@ -81,6 +85,28 @@ class VideoViewer extends Component {
         console.dir(this.state);
 
         this.onFullScreenChange = this.onFullScreenChange.bind(this);
+
+        // Phash variables
+        this.frame_count = 0;
+        this.last_hamming = 0;
+        this.total_hamming = 0;
+        this.avg_hamming = 0;
+        this.hamming = 0;
+        this.lefthash = "000000000000000000000000000000000000000000000000000000";
+        this.righthash = "000000000000000000000000000000000000000000000000000000";
+        this.quality = calcQuality;
+    }
+
+    getHamming() {
+        return this.hamming;
+    }
+
+    getLeftHash() {
+        return this.lefthash;
+    }
+
+    getRightHash() {
+        return this.righthash;
     }
 
     setPosition(position) {
@@ -142,7 +168,39 @@ class VideoViewer extends Component {
     }
 
     onTimeUpdate(time) {
+        //this.leftVideo.seek(this.rightVideo.currentTime());
         this.setPosition(time);
+
+        // enable fingerprint per frame in player
+        this.rightVideo.setQuality(Number(calcQuality));
+        this.leftVideo.setQuality(Number(calcQuality));
+
+        if (calcQuality) {
+            this.frame_count = this.frame_count + 1;
+            this.rfp = this.rightVideo.getFingerprint().split(":");
+            this.righthash = this.rfp[1];
+            this.lfp = this.leftVideo.getFingerprint().split(":");
+            this.lefthash = this.lfp[1];
+            // check if clock skew is happening, sync player if so
+            if (Math.abs(this.lfp[0] - this.rfp[0]) >= 0.3) {
+                console.log(`Left and Right Timestamps skewed, syncing players! left: ${this.lfp[0]} right: ${this.rfp[0]}`);
+                //this.leftVideo.seek(this.rightVideo.currentTime());
+                this.syncPlayers();
+            }
+            this.last_hamming = this.hamming;
+            this.hamming = hammingDistance(this.getLeftHash(), this.getRightHash());
+            this.total_hamming = this.total_hamming + this.hamming;
+            this.avg_hamming = (this.total_hamming / this.frame_count).toLocaleString(undefined, { minimumFractionDigits: 2 });
+            if (debugLog) {
+                console.log(`time: ${this.leftVideo.currentTime()} hamming: ${this.getHamming()} avg: ${this.avg_hamming} lefthash: ${this.getLeftHash()} righthash: ${this.getRightHash()}`);
+            }
+        }
+        if (playDuration > 0 && this.leftVideo.currentTime() > (startPosition + playDuration)) {
+            this.pause();
+            // rewind to start position
+            this.seek(startPosition);
+            alert("Please score the Video Quality using 0-5 with 0 as worst and 5 as best.");
+        }
     }
 
     onDurationSet(duration) {
@@ -181,6 +239,8 @@ class VideoViewer extends Component {
             const rightVariantParam = isDashOrHls(this.state.rightSource.type) ?
                 `&rightVideoVariant=${this.state.rightSource.variant}` : "";
             const path = `${window.location.host}${window.location.pathname}?position=${this.state.position}`
+            + `&duration=${this.state.duration}`
+            + `&quality=${this.quality}`
             + `&leftVideoUrl=${this.state.leftSource.url}${leftVariantParam}`
             + `&rightVideoUrl=${this.state.rightSource.url}${rightVariantParam}`
             + (urlParams.get('hideSourceSelector') ? `&hideSourceSelector=${urlParams.get('hideSourceSelector')}` : "")
@@ -197,6 +257,7 @@ class VideoViewer extends Component {
         this.rightVideo.pause();
         this.leftVideo.pause();
         this.setPlaying(false);
+        this.syncPlayers();
         return this.seek(this.leftVideo.currentTime());
     }
 
@@ -341,6 +402,7 @@ class VideoViewer extends Component {
                  tabIndex="0"
                  ref={this.setVideoViewerRef}>
                 <TimeDisplay position={this.state.position}/>
+                <HammingDisplay hidden={Boolean(!calcQuality)} hamming={this.hamming} avg_hamming={this.avg_hamming}/>
                 <HotKeys className="hotkeys-div" keyMap={KEY_MAP} handlers={this.shortCutHandlers}>
                     <SplitView tracking={this.state.tracking}
                                splitBorderVisible={this.state.splitBorderVisible}

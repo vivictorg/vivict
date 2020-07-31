@@ -1,7 +1,7 @@
 import MP4Box from 'mp4box';
 
 async function fetchUntilDone(url, onData,isDone, chunkSize = 10 * 1024 * 1024) {
-    if (url.startsWith("blob:")) {
+    if (url.startsWith("blob:") || url.endsWith(".mp4")) {
         const res = await fetch(url);
         const data = await res.arrayBuffer();
         data.fileStart = 0;
@@ -66,6 +66,7 @@ export async function mp4Info(url) {
         .catch(e => {
             console.log(`error: ${e}`);
             console.trace(e);
+            alert(`Failure loading url: ${url} with error: ${e}`);
         });
 
     return mp4InfoPromise
