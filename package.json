@@ -18,7 +18,7 @@
     "react-dom": "^16.6.3",
     "react-hotkeys": "^1.1.4",
     "react-icons": "^3.5.0",
-    "react-router-dom": "^5.0.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "^3.0.0"
   },
   "main": "electron-starter.js",
