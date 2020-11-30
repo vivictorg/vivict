@@ -35,19 +35,23 @@ class SourceSelector extends Component {
     }
 
     async loadMp4Metadata(url) {
-        const mp4Metadata = await mp4Info(url);
+        try {
+            const mp4Metadata = await mp4Info(url);
 
-        const videoTrack = mp4Metadata.videoTracks[0];
-        const metadata = {
-            variants: [
-                {
-                    bitrate: videoTrack.bitrate,
-                    width: videoTrack.video.width,
-                    height: videoTrack.video.height
-                }
-            ]
-        };
-        this.setState({metadata})
+            const videoTrack = mp4Metadata.videoTracks[0];
+            const metadata = {
+                variants: [
+                    {
+                        bitrate: videoTrack.bitrate,
+                        width: videoTrack.video.width,
+                        height: videoTrack.video.height
+                    }
+                ]
+            };
+            this.setState({metadata})
+        } catch(e) {
+            console.log(`Failed to get mp4 info: ${e}`);
+        }
     }
 
     componentDidMount() {

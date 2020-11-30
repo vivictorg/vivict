@@ -56,7 +56,7 @@ export async function mp4Info(url) {
             done = true;
             resolve(info);
         };
-    });
+
 
     fetchUntilDone(url,
         (data) => {
@@ -64,9 +64,10 @@ export async function mp4Info(url) {
         },
         () => done)
         .catch(e => {
-            console.log(`error: ${e}`);
-            console.trace(e);
+            reject(e);
         });
+
+    });
 
     return mp4InfoPromise
 }
