@@ -21,7 +21,6 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1"
   },
-  "main": "electron-starter.js",
   "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
@@ -29,11 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "electron": "electron .",
-    "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron .",
-    "electron-package-darwin": "electron-packager . --platform darwin --arch=x64 --no-prune --ignore=/node_modules --overwrite --ignore=/src --out=release-builds",
-    "electron-package": "electron-packager . --platform linux --arch=x64 --no-prune --ignore=/node_modules --overwrite --ignore=/src --out=release-builds"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -45,8 +40,6 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "electron": "^4.1.2",
-    "electron-packager": "^13.1.1",
     "typescript": "^3.4.3"
   }
 }
