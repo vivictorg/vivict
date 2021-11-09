@@ -18,8 +18,7 @@
     "react-dom": "^16.6.3",
     "react-hotkeys": "^1.1.4",
     "react-icons": "^3.5.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.1"
+    "react-router-dom": "^5.2.0"
   },
   "homepage": "./",
   "scripts": {
@@ -40,6 +39,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "react-scripts": "^4.0.1",
     "typescript": "^3.4.3"
   }
 }
