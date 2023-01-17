@@ -87,7 +87,9 @@ Vivict can be run locally by checking out the source code and running
     npm start
 
 ```
-Note: you might also need to install a few peer dependencies
+Note: you might also need to install a few peer dependencies.
+ 
+There is also a C++-based version of offline use available here: https://github.com/vivictorg/vivictpp
 
 ## Getting involved
 
