@@ -5,7 +5,7 @@ An easy to use in-browser tool for subjective comparison of the visual quality o
 ![](docs/screenshot.png?raw=true "vivict screenshot")
 
 ## Getting started
-Go to https://svt.github.io/vivict/ . By default, it will open a HLS test stream from [Sintel](https://durian.blender.org/) video in different bitrates.
+Go to https://vivictorg.github.io/vivict/. By default, it will open a HLS test stream from [Sintel](https://durian.blender.org/) video in different bitrates.
 
 
 ## Usage
