@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
-import {FiFile, FiGlobe} from "react-icons/fi";
+import React, { Component } from 'react';
+import { FiFile, FiGlobe } from "react-icons/fi";
 import cx from 'classnames';
 import './index.css';
-import {isHlsPlaylist, parseHlsManifest} from '../../util/HlsUtils';
-import {mp4Info} from '../../util/Mp4Info';
-import {isDashManifest, parseDashManifest} from "../../util/DashUtils";
+import { isHlsPlaylist, parseHlsManifest } from '../../util/HlsUtils';
+import { mp4Info } from '../../util/Mp4Info';
+import { isDashManifest, parseDashManifest } from "../../util/DashUtils";
 
 class SourceSelector extends Component {
 
@@ -26,12 +26,12 @@ class SourceSelector extends Component {
 
     async loadHlsMetadata(url) {
         const metadata = await parseHlsManifest(url);
-        this.setState({metadata});
+        this.setState({ metadata });
     }
 
     async loadDashMetadata(url) {
         const metadata = await parseDashManifest(url);
-        this.setState({metadata})
+        this.setState({ metadata })
     }
 
     async loadMp4Metadata(url) {
@@ -48,9 +48,19 @@ class SourceSelector extends Component {
                     }
                 ]
             };
-            this.setState({metadata})
-        } catch(e) {
+            this.setState({ metadata })
+        } catch (e) {
             console.log(`Failed to get mp4 info: ${e}`);
+            const metadata = {
+                variants: [
+                    {
+                        bitrate: 0,
+                        width: 0,
+                        height: 0
+                    }
+                ]
+            };
+            this.setState({ metadata });
         }
     }
 
@@ -87,7 +97,7 @@ class SourceSelector extends Component {
 
     onBlur() {
         console.log('onBlur');
-        this.setState({showUrlInput: false})
+        this.setState({ showUrlInput: false })
     }
 
     handleChange(evt) {
@@ -97,11 +107,11 @@ class SourceSelector extends Component {
     }
 
     showUrlInput() {
-        this.setState({showUrlInput: true});
+        this.setState({ showUrlInput: true });
     }
 
     hideUrlInput() {
-        this.setState({showUrlInput: false});
+        this.setState({ showUrlInput: false });
     }
 
     onUrlSelected(url) {
@@ -138,8 +148,8 @@ class SourceSelector extends Component {
     }
 
     setVariant(selectedVariant) {
-        const source = Object.assign({}, this.state.source, {variant: selectedVariant});
-        this.setState({source});
+        const source = Object.assign({}, this.state.source, { variant: selectedVariant });
+        this.setState({ source });
         if (this.props.onVariantChange) {
             this.props.onVariantChange(selectedVariant);
         }
@@ -159,7 +169,7 @@ class SourceSelector extends Component {
         const prevSource = this.state.source;
         this.loadMetadata(source)
             .then(() => {
-                this.setState({source});
+                this.setState({ source });
                 this.props.onChange(Object.assign({}, source));
                 if (prevSource.type === 'file' && prevSource.url) {
                     window.URL.revokeObjectURL(prevSource.url);
@@ -189,13 +199,13 @@ class SourceSelector extends Component {
         let metadataSpan = null;
         if (metadata) {
             if (metadata.variants.length > 1) {
-                const options = metadata.variants.map( (variant, i) => {
+                const options = metadata.variants.map((variant, i) => {
                     return (<option
                         key={i}
                         value={i}
                         selected={i === this.state.source.variant}
                     >
-                        {this.formatMetadata(variant.bandwidth,variant.width, variant.height)}
+                        {this.formatMetadata(variant.bandwidth, variant.width, variant.height)}
                     </option>);
                 });
                 metadataSpan = (<select value={this.state.selectedVariant} onChange={(e) => this.onVariantSelected(e)}>{options}</select>);
@@ -212,26 +222,26 @@ class SourceSelector extends Component {
 
     render() {
         return (
-            <div className={cx("source-selector", this.props.className, {'hidden': !this.props.visible})}>
+            <div className={cx("source-selector", this.props.className, { 'hidden': !this.props.visible })}>
                 <div className="source-buttons">
                     <div title="open URL" className="url-button" >
-                        <FiGlobe style={{cursor: 'pointer'}} onClick={() => this.showUrlInput()}/>
+                        <FiGlobe style={{ cursor: 'pointer' }} onClick={() => this.showUrlInput()} />
                     </div>
                     <label title="open local file" className="source-file-input" onClick={(evt) => {
                         this.hideUrlInput();
                         evt.stopPropagation()
                     }}>
-                        <FiFile/>
-                        <input type="file" onChange={(evt) => this.onFileSelected(evt) }/>
+                        <FiFile />
+                        <input type="file" onChange={(evt) => this.onFileSelected(evt)} />
                     </label>
                 </div>
 
                 <input className={cx('url-input',
-                    {hidden: !this.state.showUrlInput})}
-                       type="text"
-                       ref={(ref) => this.setInputRef(ref)}
-                       onBlur={() => this.onBlur()}
-                       defaultValue={this.currentUrl()}
+                    { hidden: !this.state.showUrlInput })}
+                    type="text"
+                    ref={(ref) => this.setInputRef(ref)}
+                    onBlur={() => this.onBlur()}
+                    defaultValue={this.currentUrl()}
                 />
 
                 {this.renderSelectedSource()}

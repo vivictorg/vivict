@@ -1,17 +1,20 @@
 import MP4Box from 'mp4box';
 
-async function fetchUntilDone(url, onData,isDone, chunkSize = 10 * 1024 * 1024) {
+async function fetchUntilDone(url, onData, isDone, chunkSize = 10 * 1024 * 1024) {
     if (url.startsWith("blob:")) {
         const res = await fetch(url);
         const data = await res.arrayBuffer();
         data.fileStart = 0;
         onData(data);
+        if (!isDone()) {
+            throw Error("Failed to parse mp4Info");
+        }
         return;
     }
     let start = 0;
     let end = chunkSize;
-    while(!isDone()) {
-        const responseData = await fetchRange(url, {start, end});
+    while (!isDone()) {
+        const responseData = await fetchRange(url, { start, end });
         const data = responseData.data;
         const totalSize = parseInt(responseData.contentRange.split('/')[1]);
         data.fileStart = start;
@@ -19,7 +22,7 @@ async function fetchUntilDone(url, onData,isDone, chunkSize = 10 * 1024 * 1024) 
         if (end === totalSize) break;
         start = end;
         end = Math.min(totalSize, start + chunkSize);
-        if (data.length  < chunkSize) break;
+        if (data.length < chunkSize) break;
     }
 }
 
@@ -36,7 +39,7 @@ async function fetchRange(url, range) {
     return {
         data: await response.arrayBuffer(),
         contentLength: response.headers.get('Content-Length'),
-        contentRange:  response.headers.get('Content-Range')
+        contentRange: response.headers.get('Content-Range')
     }
 }
 
@@ -58,14 +61,14 @@ export async function mp4Info(url) {
         };
 
 
-    fetchUntilDone(url,
-        (data) => {
-            mp4boxfile.appendBuffer(data)
-        },
-        () => done)
-        .catch(e => {
-            reject(e);
-        });
+        fetchUntilDone(url,
+            (data) => {
+                mp4boxfile.appendBuffer(data)
+            },
+            () => done)
+            .catch(e => {
+                reject(e);
+            });
 
     });
 
