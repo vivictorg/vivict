@@ -18,6 +18,10 @@
 
 .help .bold {
     font-weight: bold;
+    font-family: monospace;
+    background-color: #e2e2e2;
+    border-radius: 2px;
+    padding: 0 2px;
 }
 
 .help .padding10 {
