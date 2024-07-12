@@ -70,6 +70,7 @@ class SourceSelector extends Component {
 
     componentDidMount() {
         this.changeSource(this.state.source);
+        setupDragAndDrop(this);
         console.log('Source selector add event listeners');
         this.input.addEventListener('keydown', this.urlInputKeyDown);
         this.input.addEventListener('keypress', this.stopPropagation);

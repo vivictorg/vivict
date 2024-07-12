@@ -3,18 +3,28 @@
 export function setupDragAndDrop(sourceSelector) {
   // const dropArea = sourceSelector.dropArea;
   const selectorEl = sourceSelector.dropArea.parentNode;
+  const side = sourceSelector.dropArea.parentNode.classList.contains('left-source-selector') ? 'left' : 'right';
   const dragArea = document.body;
+  let bbox = selectorEl.getBoundingClientRect();
   let dragging = false;
 
-  // Setup drag n drop
+  const isMouseOutsideThisHalf = event => event.pageX < bbox.left || event.pageX > (bbox.left + bbox.width);
+
   dragArea.addEventListener('dragover', event => {
+    if (isMouseOutsideThisHalf(event)) {
+      resetDraggingUI();
+      return;
+    }
+
     event.stopPropagation();
     event.preventDefault();
-    console.log('dragover', event);
-
     if (event.dataTransfer?.types?.includes('Files')) {
       // Style the drag-and-drop as a "copy file" operation.
       event.dataTransfer.dropEffect = 'copy';
+
+      document.body.classList.add(`dropping--body-${side}`);
+      selectorEl.classList.add('dropping');
+      dragging = true;
     } else {
       // someone dragged text by mistake or something.
       resetDraggingUI();
@@ -22,6 +32,9 @@ export function setupDragAndDrop(sourceSelector) {
   });
 
   dragArea.addEventListener('drop', event => {
+    if (isMouseOutsideThisHalf(event)) { 
+      return;
+    }
     event.stopPropagation();
     event.preventDefault();
     resetDraggingUI();
@@ -34,26 +47,16 @@ export function setupDragAndDrop(sourceSelector) {
     if (!dragging) return;
     resetDraggingUI();
   });
-  dragArea.addEventListener('dragenter', event => {
-    const bbox = selectorEl.getBoundingClientRect();
-    console.log('bbox', bbox);
-  
-    console.log('dragenter', event);
-    // if (event.pageX < bbox.left || event.pageX > bbox.right) {
-    //   // resetDraggingUI();
-    //   return;
-    // }
-    
-    // Only show "drop here" if there's files in the payload
-    if (event.dataTransfer?.types?.includes('Files')) {
 
-      dragArea.classList.add('dropping');
-      dragging = true;
-    }
+
+  dragArea.addEventListener('dragenter', event => {
+    bbox = selectorEl.getBoundingClientRect();
   });
 
+
   function resetDraggingUI() {
-    dragArea.classList.remove('dropping');
+    document.body.classList.remove(`dropping--body-${side}`);
+    selectorEl.classList.remove('dropping');
     dragging = false;
   }
 }

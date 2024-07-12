@@ -1,5 +1,4 @@
 .source-selector {
-    opacity: 0.4;
     z-index: 14;
     height: 24px;
     position: absolute;
@@ -83,20 +82,13 @@
     flex-shrink: 1;
 }
 
-.drop-area {
-    position: absolute;
-    background: hsla(0, 0%, 90%, 0.3);
-    left: 0;
-    right: 0;
-    top: 20px;
-    height: 100vh;
-    width: 100%;
-}
 /** drag n drop */
-.dropping .split-view-container {
-     filter: blur(2px) grayscale(1);
+.dropping--body-left .split-view-container,
+.dropping--body-right .split-view-container {
+     filter: blur(4px);
 }
-.dropping .help {
+.dropping--body-left .help,
+.dropping--body-right .help {
     display: none;
 }
 
