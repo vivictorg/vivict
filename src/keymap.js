@@ -29,7 +29,7 @@ export const COMMANDS = {
         PAN_RIGHT: command('PAN_RIGHT', 'right', 'Pan right'),
         PAN_LEFT: command('PAN_LEFT', 'left', 'Pan left'),
         REST_PAN_ZOOM: command('RESET_PAN_ZOOM', '0', 'Reset pan and zoom to default'),
-        TOGGLE_HELP: command('TOOGLE_HELP', 'esc', 'Toggle help window'),
+        TOGGLE_HELP: command('TOOGLE_HELP', ['esc','?'], 'Toggle help window'),
         TOGGLE_SPLIT_BORDER_VISIBLE: command('TOGGLE_SPLIT_BORDER_VISIBLE', 's', 'Toggle split border visible')
 };
 
