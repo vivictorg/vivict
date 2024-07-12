@@ -93,8 +93,11 @@
     width: 100%;
 }
 /** drag n drop */
-.dropping main {
+.dropping .split-view-container {
      filter: blur(2px) grayscale(1);
+}
+.dropping .help {
+    display: none;
 }
 
 /* translucent screen */

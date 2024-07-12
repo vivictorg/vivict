@@ -1,13 +1,16 @@
 
 
 export function setupDragAndDrop(sourceSelector) {
-  const dropArea = sourceSelector.dropArea;
+  // const dropArea = sourceSelector.dropArea;
+  const selectorEl = sourceSelector.dropArea.parentNode;
+  const dragArea = document.body;
   let dragging = false;
 
   // Setup drag n drop
-  dropArea.addEventListener('dragover', event => {
+  dragArea.addEventListener('dragover', event => {
     event.stopPropagation();
     event.preventDefault();
+    console.log('dragover', event);
 
     if (event.dataTransfer?.types?.includes('Files')) {
       // Style the drag-and-drop as a "copy file" operation.
@@ -18,7 +21,7 @@ export function setupDragAndDrop(sourceSelector) {
     }
   });
 
-  dropArea.addEventListener('drop', event => {
+  dragArea.addEventListener('drop', event => {
     event.stopPropagation();
     event.preventDefault();
     resetDraggingUI();
@@ -27,21 +30,30 @@ export function setupDragAndDrop(sourceSelector) {
 
   // The mouseleave event is more reliable than dragleave when the user drops
   // the file outside the window.
-  dropArea.addEventListener('mouseleave', _ => {
+  dragArea.addEventListener('mouseleave', _ => {
     if (!dragging) return;
     resetDraggingUI();
   });
-  dropArea.addEventListener('dragenter', event => {
-    // Don't trigger if someone (me) accidentally drags the demo link.
+  dragArea.addEventListener('dragenter', event => {
+    const bbox = selectorEl.getBoundingClientRect();
+    console.log('bbox', bbox);
+  
+    console.log('dragenter', event);
+    // if (event.pageX < bbox.left || event.pageX > bbox.right) {
+    //   // resetDraggingUI();
+    //   return;
+    // }
+    
+    // Only show "drop here" if there's files in the payload
     if (event.dataTransfer?.types?.includes('Files')) {
-      // 
-      dropArea.classList.add('dropping');
+
+      dragArea.classList.add('dropping');
       dragging = true;
     }
   });
 
   function resetDraggingUI() {
-    dropArea.classList.remove('dropping');
+    dragArea.classList.remove('dropping');
     dragging = false;
   }
 }
