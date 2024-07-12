@@ -39,7 +39,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "react-scripts": "5.0.0",
+    "react-scripts": "^4.0.1",
     "typescript": "^3.4.3"
   }
 }
