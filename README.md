@@ -17,6 +17,8 @@ The screen is split into two parts, with the left and right part displaying the 
 On the top left and right are the source selectors, allowing you to select sources for the left and right video 
 respectively. You can either input a URL or open a local file. If the source is a HLS-playlist, you can also select which video stream you want to view.
 
+It is also possible to load local files with drag-and-drop.
+
 #### URL parameters
 
 If you want to programmatically change the sources or the playback position, you can use the following URL parameters:
@@ -61,7 +63,7 @@ http://localhost:3000/?leftVideoUrl=http%3A%2F%2Fexample.com%2Ftest1.mp4&rightVi
 <kbd>left</kbd> Pan left  
 <kbd>0</kbd> Reset pan and zoom to default  
 <kbd>s</kbd> Toggle visibility of split border  
-<kbd>esc</kbd> Toggle help window  
+<kbd>esc</kbd> <kbd>?</kbd> Toggle help window  
 
 If you think the shortcuts could be better, feel free to suggest a setup!
 
