@@ -5,6 +5,7 @@ import './index.css';
 import { isHlsPlaylist, parseHlsManifest } from '../../util/HlsUtils';
 import { mp4Info } from '../../util/Mp4Info';
 import { isDashManifest, parseDashManifest } from "../../util/DashUtils";
+import { setupDragAndDrop } from '../../util/DragNDrop';
 
 class SourceSelector extends Component {
 
@@ -22,6 +23,9 @@ class SourceSelector extends Component {
 
     setInputRef(inputRef) {
         this.input = inputRef;
+    }
+    setDropAreaRef(dropAreaRef) {
+        this.dropArea = dropAreaRef;
     }
 
     async loadHlsMetadata(url) {
@@ -66,6 +70,7 @@ class SourceSelector extends Component {
 
     componentDidMount() {
         this.changeSource(this.state.source);
+        setupDragAndDrop(this);
         console.log('Source selector add event listeners');
         this.input.addEventListener('keydown', this.urlInputKeyDown);
         this.input.addEventListener('keypress', this.stopPropagation);
@@ -105,6 +110,16 @@ class SourceSelector extends Component {
             this.props.onChange(evt.target.files[0])
         }
     }
+    handleDrop(evt) {
+        if (evt.dataTransfer.files) {
+            const file = evt.dataTransfer.files[0];
+            this.changeSource({
+                type: 'file',
+                name: file.name,
+                url: window.URL.createObjectURL(file),
+            });
+        }
+    }
 
     showUrlInput() {
         this.setState({ showUrlInput: true });
@@ -133,6 +148,7 @@ class SourceSelector extends Component {
 
     onFileSelected(evt) {
         if (evt.target.files && evt.target.files[0]) {
+            console.log('file select', evt.target.files);
             const file = evt.target.files[0];
             this.changeSource({
                 type: 'file',
@@ -246,6 +262,9 @@ class SourceSelector extends Component {
 
                 {this.renderSelectedSource()}
 
+
+                <div className="drop-area" ref={(ref) => this.setDropAreaRef(ref)}></div>
+                
             </div>
         )
     }

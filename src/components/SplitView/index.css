@@ -6,6 +6,7 @@
     width: 100%;
     z-index: inherit;
     outline: none;
+    margin-top: 24px;
 }
 
 .split-view-container:-webkit-full-screen {

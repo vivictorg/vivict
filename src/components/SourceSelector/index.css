@@ -1,12 +1,10 @@
 .source-selector {
-    opacity: 0.4;
     z-index: 14;
     height: 24px;
     position: absolute;
     background: white;
     display: flex;
     flex-wrap: nowrap;
-    overflow: hidden;
     justify-content: space-between;
     border-radius: 6px;
 }
@@ -82,4 +80,50 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-shrink: 1;
+}
+
+/** drag n drop */
+.dropping--body-left .split-view-container,
+.dropping--body-right .split-view-container {
+     filter: blur(4px);
+}
+.dropping--body-left .help,
+.dropping--body-right .help {
+    display: none;
+}
+
+/* translucent screen */
+.dropping::before {
+    background-color: rgba(255,255,255,0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+}
+
+.dropping::after {
+    --width: 33vw;
+    --height: 20vh;
+
+    content: 'Drop file here';
+    border: 2px dashed currentColor;
+    border-radius: 5px;
+    padding: 25px;
+
+    width: var(--width);
+    height: var(--height);
+    min-width: 250px;
+    position: absolute;
+    top: calc(50vh - var(--height));
+    left: calc(25vw - var(--width)/2); /* middle of half the viewport */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: #ffffffe6;
+    font-size: 35px;
+    font-weight: 600;
 }
